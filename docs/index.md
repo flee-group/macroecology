@@ -1,4 +1,3 @@
-# Special Topics in Ecology: Macroecology
 **Instructor**: Matthew Talluto
 
 **Office**: Technikerstraße 25, Room 506
