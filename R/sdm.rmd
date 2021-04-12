@@ -1,0 +1,86 @@
+---
+title: "Species Distribution Models"
+author: "Matthew Talluto"
+date: "19.04.2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+There are a number of large public databases that can be useful for macroecological analyses. We will begin with a few that will be useful for species distribution modelling.
+
+## 1. Point occurrence records
+
+We will use the [Global Biodiversity Information Facility](https://www.gbif.org/) (GBIF) to access species occurrence records. This is an open database of worldwide occurrences of species from all taxonomic groups. We can use the `rgbif` package to interact with the database directly from R.
+
+```{r, message = FALSE}
+# install.packages('rgbif') ## use if not already installed on your computer.
+library(rgbif)
+library(maptools)
+library(sf)
+```
+
+
+```{r, message = FALSE}
+## How many occurrences recorded in Austria?
+occ_count(country="AT")
+## you can get the ISO codes for other countries with this variable:
+## isocodes
+```
+
+
+```{r, message = FALSE}
+## GBIF has many kinds of occurrence records. Here we ask for species that were observed (i.e., no specimen was taken)
+occ_count(country="AT", basisOfRecord = "OBSERVATION")
+
+```
+
+
+### 1.1 Downloading records
+
+We will use *Sorex alpinus*, the alpine shrew, as an example taxon for this exercise. The alpine shrew can be uncommonly found in Tirol, and is listed as near threatened by the [IUCN](https://www.iucnredlist.org/species/29660/9514588).
+
+![](../img/Sorex_alpinus.jpg)
+
+Before looking up a species in GBIF, it's a good idea to check for synonyms:
+
+```{r syn}
+(tkey <- name_suggest(q='Sorex alpinus', rank='species'))
+```
+
+This indicates only one known name, so we proceed with a record search.
+
+```{r shrew}
+occ_count(taxonKey = tkey$data$key)
+
+shrew = as.data.frame(occ_data(taxonKey = tkey$data$key, limit = 800)$data)
+
+## this is a very large table, so we just check a piece of it
+head(shrew[,1:10])
+
+```
+
+### 1.2 Data cleaning
+
+GBIF is a public database, so it's not uncommon to find incorrect records. It's important therefore to start by checking for and removing any obvious problems. One of the easiest ways is to plot the data on a map. Additionally, we can download an expert-drawn range map and compare it to the occurrences.
+
+```{r map}
+## keep records from the last ~ 50 years
+shrew = subset(shrew, year > 1970)
+
+## remove missing coordinates
+shrew = subset(shrew, !(is.na(decimalLongitude) | is.na(decimalLatitude)))
+
+## convert to a spatial object
+shrew_sf = st_as_sf(shrew, coords = c("decimalLongitude", "decimalLatitude"), crs = 4326)
+
+## plot on the map
+data(wrld_simpl)
+plot(wrld_simpl,xlim=c(5,130), ylim=c(40,55))
+plot(st_geometry(shrew_sf[shrew_sf$year > 1950,]), add = TRUE, col='red', pch=16, cex=0.8)
+
+```
+
+
