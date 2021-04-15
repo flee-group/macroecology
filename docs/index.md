@@ -16,81 +16,93 @@ We will explore major concepts and advances in macroecology through a combinatio
 * Design macroecological models and identify approapriate data sources 
 
 ## Schedule
+
 <style type="text/css">
 .tg  {border-collapse:collapse;border-color:#93a1a1;border-spacing:0;}
 .tg td{background-color:#fdf6e3;border-color:#93a1a1;border-style:solid;border-width:0px;color:#002b36;
   font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 5px;word-break:normal;}
 .tg th{background-color:#657b83;border-color:#93a1a1;border-style:solid;border-width:0px;color:#fdf6e3;
   font-family:Arial, sans-serif;font-size:14px;font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
-.tg .tg-cly1{text-align:left;vertical-align:middle}
-.tg .tg-1wig{font-weight:bold;text-align:left;vertical-align:top}
+.tg .tg-fymr{border-color:inherit;font-weight:bold;text-align:left;vertical-align:top}
+.tg .tg-0pky{border-color:inherit;text-align:left;vertical-align:top}
 </style>
-<table class="tg" style="undefined;table-layout: fixed; width: 630px">
+<table class="tg" style="undefined;table-layout: fixed; width: 758px">
 <colgroup>
-<col style="width: 88px">
-<col style="width: 223px">
-<col style="width: 127px">
-<col style="width: 192px">
+<col style="width: 118px">
+<col style="width: 245px">
+<col style="width: 89px">
+<col style="width: 147px">
+<col style="width: 159px">
 </colgroup>
 <thead>
   <tr>
-    <th class="tg-1wig">Date</th>
-    <th class="tg-1wig">Topic</th>
-    <th class="tg-1wig">Type</th>
-    <th class="tg-1wig">Readings</th>
+    <th class="tg-fymr">Date</th>
+    <th class="tg-fymr">Topic</th>
+    <th class="tg-fymr">Type</th>
+    <th class="tg-fymr">Readings</th>
+    <th class="tg-0pky"><span style="font-weight:bold">Exercises</span></th>
   </tr>
 </thead>
 <tbody>
   <tr>
-    <td class="tg-cly1">Fr 16.04<br>9:15-13:00</td>
-    <td class="tg-cly1">Niches, species ranges</td>
-    <td class="tg-cly1">Lecture</td>
-    <td class="tg-cly1"><a href="https://www.cell.com/trends/ecology-evolution/fulltext/S0169-5347(18)30186-1?_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS0169534718301861%3Fshowall%3Dtrue">Shade et al. 2018</a></td>
+    <td class="tg-0pky">Fr 16.04<br>9:15-13:00</td>
+    <td class="tg-0pky">Niches, species ranges</td>
+    <td class="tg-0pky">Lecture</td>
+    <td class="tg-0pky"><a href="https://www.cell.com/trends/ecology-evolution/fulltext/S0169-5347(18)30186-1?_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS0169534718301861%3Fshowall%3Dtrue">Shade et al. 2018</a></td>
+    <td class="tg-0pky"></td>
   </tr>
   <tr>
-    <td class="tg-cly1">Mo 19.04<br>13:15-17:00</td>
-    <td class="tg-cly1">Species Distribution Modelling I</td>
-    <td class="tg-cly1">Seminar/Lab</td>
-    <td class="tg-cly1"><a href="https://www.annualreviews.org/doi/full/10.1146/annurev.ecolsys.110308.120159?casa_token=mdDFf2Vpu8oAAAAA:EvGYQGT3wgeVKGySA0QzcQnSjaXi0V0t2Cq8lG1zhnli5tEv4ap1fJLsvh-Wx5EF0jQXqjI0GD18">Elith & Leathwick 2009</a></td>
+    <td class="tg-0pky">Mo 19.04<br>13:15-17:00</td>
+    <td class="tg-0pky">Species Distribution Modelling I</td>
+    <td class="tg-0pky">Seminar/Lab</td>
+    <td class="tg-0pky"><a href="https://www.annualreviews.org/doi/full/10.1146/annurev.ecolsys.110308.120159?casa_token=mdDFf2Vpu8oAAAAA:EvGYQGT3wgeVKGySA0QzcQnSjaXi0V0t2Cq8lG1zhnli5tEv4ap1fJLsvh-Wx5EF0jQXqjI0GD18">Elith & Leathwick 2009</a></td>
+    <td class="tg-0pky"><a href="sdm_prep.html">SDM Data Preparation</a></td>
   </tr>
   <tr>
-    <td class="tg-cly1">Di 20.04<br>9:15-13:00</td>
-    <td class="tg-cly1">Metapopulations<br>Biodiversity</td>
-    <td class="tg-cly1">Lecture</td>
-    <td class="tg-cly1"><a href="https://www.nature.com/articles/s41559-017-0182">Talluto et al 2017</a></td>
+    <td class="tg-0pky">Di 20.04<br>9:15-13:00</td>
+    <td class="tg-0pky">Metapopulations<br>Biodiversity</td>
+    <td class="tg-0pky">Lecture</td>
+    <td class="tg-0pky"><a href="https://www.nature.com/articles/s41559-017-0182">Talluto et al. 2017</a></td>
+    <td class="tg-0pky"></td>
   </tr>
   <tr>
-    <td class="tg-cly1">Fr 23.04<br>9:15-13:00</td>
-    <td class="tg-cly1">Species Distribution Modelling II</td>
-    <td class="tg-cly1">Seminar/Lab</td>
-    <td class="tg-cly1"></td>
+    <td class="tg-0pky">Fr 23.04<br>9:15-13:00</td>
+    <td class="tg-0pky">Species Distribution Modelling II</td>
+    <td class="tg-0pky">Seminar/Lab</td>
+    <td class="tg-0pky"></td>
+    <td class="tg-0pky"></td>
   </tr>
   <tr>
-    <td class="tg-cly1">Mo 26.04<br>13:15-17:00</td>
-    <td class="tg-cly1">The Eltonian Niche<br>Functional Diversity</td>
-    <td class="tg-cly1">Lecture</td>
-    <td class="tg-cly1"></td>
+    <td class="tg-0pky">Mo 26.04<br>13:15-17:00</td>
+    <td class="tg-0pky">The Eltonian Niche<br>Functional Diversity</td>
+    <td class="tg-0pky">Lecture</td>
+    <td class="tg-0pky"></td>
+    <td class="tg-0pky"></td>
   </tr>
   <tr>
-    <td class="tg-cly1">Di 27.04<br>13:15-17:00</td>
-    <td class="tg-cly1">Macroecological Models<br>Biodiversity Models</td>
-    <td class="tg-cly1">Seminar/Lab</td>
-    <td class="tg-cly1"></td>
+    <td class="tg-0pky">Di 27.04<br>13:15-17:00</td>
+    <td class="tg-0pky">Macroecological Models<br>Biodiversity Models</td>
+    <td class="tg-0pky">Seminar/Lab</td>
+    <td class="tg-0pky"></td>
+    <td class="tg-0pky"></td>
   </tr>
   <tr>
-    <td class="tg-cly1">Fr 30.04<br>9:15-11</td>
-    <td class="tg-cly1">Conservation Macroecology</td>
-    <td class="tg-cly1">Lecture</td>
-    <td class="tg-cly1"></td>
+    <td class="tg-0pky">Fr 30.04<br>9:15-11</td>
+    <td class="tg-0pky">Conservation Macroecology</td>
+    <td class="tg-0pky">Lecture</td>
+    <td class="tg-0pky"></td>
+    <td class="tg-0pky"></td>
   </tr>
   <tr>
-    <td class="tg-cly1">Fr 30.04<br>11:15-13:00</td>
-    <td class="tg-cly1">Biodiversity Models II</td>
-    <td class="tg-cly1">Seminar/Lab</td>
-    <td class="tg-cly1"></td>
+    <td class="tg-0pky">Fr 30.04<br>11:15-13:00</td>
+    <td class="tg-0pky">Biodiversity Models II</td>
+    <td class="tg-0pky">Seminar/Lab</td>
+    <td class="tg-0pky"></td>
+    <td class="tg-0pky"></td>
   </tr>
 </tbody>
 </table>
+
 
 ## Exercises & Assignments
 * **Paper discussions**: We will discuss some relatively recent literature during lecture and/or seminar times. Students will be asked to read the papers in advance and come prepared with a few discussion points, and to participate actively in the discussions.
