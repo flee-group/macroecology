@@ -70,7 +70,7 @@ We will explore major concepts and advances in macroecology through a combinatio
     <td class="tg-0pky">Species Distribution Modelling II</td>
     <td class="tg-0pky">Seminar/Lab</td>
     <td class="tg-0pky"></td>
-    <td class="tg-0pky"></td>
+    <td class="tg-0pky"><a href="sdm.html">SDM: Modelling</a></td>
   </tr>
   <tr>
     <td class="tg-0pky">Mo 26.04<br>13:15-17:00</td>
