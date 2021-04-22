@@ -76,21 +76,21 @@ We will explore major concepts and advances in macroecology through a combinatio
     <td class="tg-0pky">Mo 26.04<br>13:15-17:00</td>
     <td class="tg-0pky">The Eltonian Niche<br>Functional Diversity</td>
     <td class="tg-0pky">Lecture</td>
-    <td class="tg-0pky"></td>
+    <td class="tg-0pky"><a href="https://www.nature.com/articles/nature11631">Jetz et al. 2012</a></td>
     <td class="tg-0pky"></td>
   </tr>
   <tr>
     <td class="tg-0pky">Di 27.04<br>13:15-17:00</td>
     <td class="tg-0pky">Macroecological Models<br>Biodiversity Models</td>
     <td class="tg-0pky">Seminar/Lab</td>
-    <td class="tg-0pky"></td>
+    <td class="tg-0pky"><a href="https://science.sciencemag.org/content/297/5586/1548.abstract?casa_token=14kfjHd5yh0AAAAA:0w-_2L_8TCnuRrp6QsqnQoH96bdCnqIkti2Nxd9PLGLcdmgdQqL4fcljZhwiYllDfekuO8ncYni66w">Jetz and Rahbek 2002</a></td>
     <td class="tg-0pky"></td>
   </tr>
   <tr>
     <td class="tg-0pky">Fr 30.04<br>9:15-11</td>
     <td class="tg-0pky">Conservation Macroecology</td>
     <td class="tg-0pky">Lecture</td>
-    <td class="tg-0pky"></td>
+    <td class="tg-0pky"><a href="https://www.nature.com/articles/nature14324/briefing/signup/?origin=Nature&originReferralPoint=EmailBanner">Newbold et al. 2015</a></td>
     <td class="tg-0pky"></td>
   </tr>
   <tr>
