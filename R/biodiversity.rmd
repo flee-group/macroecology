@@ -9,19 +9,50 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r}
+```{r, message = FALSE}
 library(sf)
 library(fasterize)
-mamm = st_read("../data/mammals/MAMMALS_TERRESTRIAL_ONLY.shp")
-mamm = st_crop(mamm, clim_pres)
-mamm = st_cast(mamm, "MULTIPOLYGON")
-saveRDS(mamm, "../data/mammal_ranges.rds")
-mr = fasterize(mamm, clim_pres[[1]], fun = "sum", background = 0)
-plot(mr, col=scico::scico(100))
+library(raster)
+clim_pres = stack("../data/bioclim_pres.grd")
+mamm = readRDS("../data/mammal_ranges.rds")
+mamm_r = fasterize(mamm, clim_pres[[1]], fun = "sum", background = NA)
+mamm_r_status = fasterize(mamm, clim_pres[[1]], fun = "sum", background = NA, by="category")
+plot(mamm_r, col=scico::scico(100))
+
+## sum the richness of any vulnerable/threatened/endangered species
+names(mamm_r_status) ## we want index 2,4,5,6
+mamm_en = raster::stackApply(mamm_r_status, c(1,2,1,2,2,2), sum)[[2]]
+
 ```
 
 
+## Outline
 
+## Data prep and visualisation
+-- human influence index (https://sedac.ciesin.columbia.edu/data/set/wildareas-v2-human-influence-index-geographic)
+-- elevation (https://www.eea.europa.eu/data-and-maps/data/copernicus-land-monitoring-service-eu-dem)
+-- temperature & precip (already used)
+
+### get all raster layers into the same (3035) projection and extent
+
+
+## Joining data
+They are already joined, because they are raster format
+note that it is problematic to do analyses on this, because geographic effects are confounded
+we have a few possibilities; we could subsample (but not super nice)
+we can use space in the model somehow (try with GAM)
+we can treat our model as exploratory and not try to over interpret
+
+## extract data as points
+
+## fit a Poisson GLM
+## try with a GAM as well
+	can use s(x,y) to get a 2-d smoothed surface
+	
+a bit about GAM
+subsampling if needed
+
+## Visualising and interpreting
 
 
 
