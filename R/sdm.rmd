@@ -219,39 +219,32 @@ The list of bioclim variables is:
   * bio18 = Precipitation of Warmest Quarter
   * bio19 = Precipitation of Coldest Quarter
 
-First, we start with `bio1`, the mean annual temperature. This is a nice measure of the overall warmness of the climate. We can eliminate any variable with a correlation >= 0.5:
+First, we start with `bio1`, the mean annual temperature. This is a nice measure of the overall warmness of the climate. We can eliminate any variable with a absolute correlation >= 0.5:
 
 ```{r bio1}
 thresh = 0.5
 chosen = 'bio1'
 ## what is left
-(remaining = names(which(cor_mat['bio1',] < thresh)))
+(remaining = names(which(abs(cor_mat['bio1',]) < thresh)))
 ```
 
-We would like a preciptation measure as well; I propose summer precipitation as being most relevant for the shrew.
+We would like a precipitation measure as well; I propose annual precipitation as being most relevant for the shrew.
 
 ```{r bio18}
-chosen = c(chosen, 'bio18')
-(remaining = names(which(cor_mat['bio18',remaining] < thresh)))
+chosen = c(chosen, 'bio12')
+(remaining = names(which(abs(cor_mat['bio12',remaining]) < thresh)))
 ```
 
-Now that we have estimates of location (i.e., means or totals), we could also examine climatic variability. For temperature, we choose `bio4`, seasonality, for precipitation we go with `bio15`.
+Now that we have estimates of location (i.e., means or totals), we could also examine climatic variability. For temperature, we choose `bio4`, seasonality, for precipitation we go with `bio15`. We can also include `bio2`, as it is not strongly correlated and measures a different aspect of variability.
 
 ```{r bio415}
 chosen = c(chosen, 'bio4')
-(remaining = names(which(cor_mat['bio4',remaining] < thresh)))
+(remaining = names(which(abs(cor_mat['bio4',remaining]) < thresh)))
 chosen = c(chosen, 'bio15')
-(remaining = names(which(cor_mat['bio15',remaining] < thresh)))
+(remaining = names(which(abs(cor_mat['bio15',remaining]) < thresh)))
+(chosen = c(chosen, 'bio2'))
 ```
 
-
-We still have `bio2` (diurnal range), and `bio19` (winter precip). They are not strongly correlated, so we keep both.
-
-```{r bio219}
-cor_mat[remaining,remaining]
-(chosen = c(chosen, 'bio2', 'bio19'))
-
-```
 
 Note that there are other approaches; if you don't care about interpreting the variables, you can quantitatively assess variable importance using AIC with univariate models (Dormann et al. 2013). However, in most cases, it's a good idea to select variables that make sense or that test hypotheses that you as a modeller care about.
 
@@ -260,8 +253,8 @@ Note that there are other approaches; if you don't care about interpreting the v
 Now we have a set of predictors, and we can fit a model with all of them. Because many niches are hump-shaped, we also include quadratic terms for all variables in the full model. Later, we will try dropping variables to find what is known as a minimal adequate model.
 
 ```{r full_model}
-full_mod = glm(presence ~ bio1 + bio2 + bio4 + bio15 + bio18 + bio19 + 
-			   	I(bio1^2) + I(bio2^2) + I(bio4^2) + I(bio15^2) + I(bio18^2) + I(bio19^2),
+full_mod = glm(presence ~ bio1 + bio2 + bio4 + bio12 + bio15 + 
+			   	I(bio1^2) + I(bio2^2) + I(bio4^2) + I(bio12^2) + I(bio15^2),
 			   data = sorex_pa_sc, family='binomial')
 summary(full_mod)
 ```
@@ -278,7 +271,7 @@ reduced_mod <- step(full_mod, trace=0)
 summary(reduced_mod)
 ```
 
-However, `step` is not very smart about dropping terms. In particular, step will happily eliminate linear terms while leaving the quadratic term, which is bad practise. So we must either drop the quadratic terms for `bio4` and `bio19`, or we must add the linear terms back in. We will use the AIC difference to decide which is better; a positive number indicates an improvement.
+However, `step` is not very smart about dropping terms. In particular, step will happily eliminate linear terms while leaving the quadratic term, which is bad practise. So we must either drop the quadratic terms for `bio4` and `bio15`, or we must add the linear terms back in. We will use the AIC difference to decide which is better; a positive number indicates an improvement.
 
 ```{r addbio4}
 ## adding bio4 back in
@@ -292,17 +285,19 @@ reduced_mod = update(reduced_mod, ~.+bio4)
 
 For `bio4`, adding the linear term makes the model slightly worse, but dropping the quadratic term is MUCH worse, so we add the linear term back.
 
-```{r addbio19}
-## adding bio4 back in
-AIC(reduced_mod) - AIC(update(reduced_mod, ~.+bio19))
+```{r addbio15}
+## adding bio15 back in
+AIC(reduced_mod) - AIC(update(reduced_mod, ~.+bio15))
 
 ## dropping the quadratic term
-AIC(reduced_mod) - AIC(update(reduced_mod, ~.-I(bio19^2)))
+AIC(reduced_mod) - AIC(update(reduced_mod, ~.-I(bio15^2)))
 
-reduced_mod = update(reduced_mod, ~.+bio19)
+reduced_mod = update(reduced_mod, ~.-I(bio15^2))
 ```
 
-We see the same with `bio19.` So now, our model looks like this. Note that this model is quite large, and contains curvilinear terms; thus it is not so easy to understand just from the parameters how the range of our shrew relates to each predictor.
+We see with `bio15` that we could either add the lienar term or drop the quadratic one, the effect is very similar. Removing the quadratic term is slightly better, and also keeps the model simpler, so we do this.
+
+Now our model looks like this. Note that this model is quite large, and contains curvilinear terms; thus it is not so easy to understand just from the parameters how the range of our shrew relates to each predictor.
 
 ```{r reduced}
 summary(reduced_mod)
@@ -328,13 +323,13 @@ Previously, we fit a **response curve** to a single variable, showing how the pr
 	
 ```{r response}
 ## the variables in our model
-vars = c("bio1", "bio2", "bio4", "bio15", "bio18", "bio19")
+vars = c("bio1", "bio2", "bio4", "bio12")
 nms = c(bio1 = "Annual Mean Temperature", bio2 = "Mean Diurnal Range", bio4 = "Temperature Seasonality", 
-		bio15 = "Precipitation Seasonality", bio18 = "Precipitation of Warmest Quarter", bio19 = "Precipitation of Coldest Quarter")
+		bio12 = "Annual Precipitation")
 
 ## create a dummy data frame for predicting
-pr_data = data.frame(bio1 = rep(0, 100), bio2=0, bio4=0, bio15=0, bio18=0, bio19=0)
-par(mfrow=c(2,3))
+pr_data = data.frame(bio1 = rep(0, 100), bio2=0, bio4=0, bio12=0)
+par(mfrow=c(2,2))
 for(v in vars) {
 	pr_data[[v]] = seq(-3,3, length.out=nrow(pr_data))
 	theta = predict(reduced_mod, newdata=pr_data, type='response')
@@ -356,7 +351,7 @@ Now, we want to know how well our model predicts the observations. Different mea
 thresh_data = data.frame(
 	id = 1:nrow(sorex_pa_sc),
 	pres = as.integer(sorex_pa_sc[['presence']])-1,
-	prob = predict(reduced_mod)
+	prob = predict(reduced_mod, type='response')
 )
 thold = optimal.thresholds(thresh_data, opt.methods=3)[1,2]
 
