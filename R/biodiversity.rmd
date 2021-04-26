@@ -17,7 +17,7 @@ library(ggplot2)
 library(rnaturalearth)
 library(scico)
 library(gridExtra)
-
+library(rgdal)
 ```
 
 Today we will be exploring biodiversity using the IUCN rangemaps that we briefly explored in the first exercise. Note that this dataset includes all species for which the IUCN performs an assessment, and that, being expert-derived rangemaps, the resolution is rather coarse. Thus, our interpretations must be made with care, as they will necessarily represent approximate or potential diversity, rather than diversity as measured during (e.g.) a biodiversity inventory.
@@ -86,18 +86,27 @@ The lognormal appears to be an even worse fit, with too few high-diversity areas
 
 ## 2. Data preparation
 
-Our main task here is to load in all of the data sources we would like to use, get them into a unified format (same projection, extent and resolution), and then transform them into a data.frame for further analysis. In addition to the mammal range maps and the climate data from previous exercises, we now have a digital elevation model from the [Copernicus land monitoring service](https://www.eea.europa.eu/data-and-maps/data/copernicus-land-monitoring-service-eu-dem), the [human influence index](https://sedac.ciesin.columbia.edu/data/set/wildareas-v2-human-influence-index-geographic), and the [Corine Land Cover dataset](https://land.copernicus.eu/pan-european/corine-land-cover/clc2018?tab=download). Note that the Corine data is quite large (100-m resolution for all Europe), thus I have already cropped and downscaled the data for this exercise. Here we load and visualise these datasets.
+Our main task here is to load in all of the data sources we would like to use, get them into a unified format (same projection, extent and resolution), and then transform them into a data.frame for further analysis. 
+
+### 2.1 Data sources
+
+In addition to the mammal range maps and the climate data from previous exercises, we now have a digital elevation model from the [Copernicus land monitoring service](https://www.eea.europa.eu/data-and-maps/data/copernicus-land-monitoring-service-eu-dem) and the [human influence index](https://sedac.ciesin.columbia.edu/data/set/wildareas-v2-human-influence-index-geographic). 
+
+If you are interested in more "raw" land cover data, you could also check out the [Corine Land Cover dataset](https://land.copernicus.eu/pan-european/corine-land-cover/clc2018?tab=download). Note that the Corine data is quite large (100-m resolution for all Europe), and can be a bit difficult for slower computers.
 
 ```{r read_data, figure.width = 12}
 elev = raster("../data/biodiv/elevation.grd")
 hii = raster("../data/biodiv/hii.grd")
 
-p1 = c_map + geom_tile(data = as.data.frame(rasterToPoints(elev)), aes(x=x, y=y, fill=dem_global_30sec)) + scale_fill_scico(palette = "grayC") +
+p1 = c_map + geom_tile(data = as.data.frame(rasterToPoints(elev)), aes(x=x, y=y, fill=dem_global_30sec)) + scale_fill_scico(palette = "grayC", direction = -1) +
 	labs(fill = "Elevation (m)")
 p2 = c_map + geom_tile(data = as.data.frame(rasterToPoints(hii)), aes(x=x, y=y, fill=hii_v2geo)) + scale_fill_scico(palette = "bamako") + 
 	labs(fill="Human Influence Index")
 grid.arrange(p1, p2, nrow=1)
 ```
+
+
+### 2.2 Map projections
 
 A new problem is the map projection used. Previously, we have been ok to use latitude and longitude coordinates. However, our analysis now is accumulating species within grid cells; this analysis will be biased because the grid cells vary in area based on latitude (and the species area relationship tells us that larger areas have more species). Thus, we must reproject our species ranges into an *equal area projection*, recompute the species richness, and then reproject our predictor variables as well.
 
@@ -105,17 +114,140 @@ We will use the [European Lambert equal area conic projection](https://epsg.io/3
 
 ```{r reproject}
 
+## First set up a template raster with the right projection. We will use the coarest resolution raster
+## out of everything we have, so that everything ends up lined up to the "worst" dataset
+res(clim_pres)
+res(elev)
+res(hii)
+
+## climate is the coarsest, so we project it first
+## I specify a resolution manually to preserve square pixels; 4km is about the size of the largest
+## pixels in the original dataset
+clim_pres = projectRaster(clim_pres, crs="+init=epsg:3035", res=4000)
+
+## the other rasters will use climate as the template
+elev = projectRaster(elev, clim_pres)
+hii = projectRaster(hii, clim_pres)
+
+```
+
+Now we also reproject species ranges, and recompute richness on the new grid.
+
+```{r proj_mamm}
+mamm = st_transform(mamm, crs=crs(clim_pres))
+mamm_r = fasterize(mamm, clim_pres[[1]], fun = "sum", background = NA)
+
+## also transform countries for plotting
+countries = st_transform(countries, crs=crs(clim_pres))
+mamm_pl = as.data.frame(rasterToPoints(mamm_r))
+c_map = ggplot(countries) + geom_sf(colour='black', fill='white') + xlab("") + ylab("")
+c_map + geom_tile(data = mamm_pl, aes(x=x, y=y, fill=layer), alpha = 0.8) + 
+	scale_fill_scico(palette="davos") + labs(fill="Mammal Species Richness")
+
+
+```
+
+### 2.3 Joining the data
+
+The final step, joining the data, is trivial. The rasters are already aligned and in the same format, so we just use the `stack` function to collapse them into a single dataset, and then `rasterToPoints` to put them into a data.frame for analysis.
+
+```{r stack}
+richness_df = stack(richness = mamm_r, elev = elev, hii = hii, clim_pres)
+richness_df = as.data.frame(rasterToPoints(richness_df))
+
+## fix some column names
+colnames(richness_df)[grep('layer', colnames(richness_df))] = 'richness'
+colnames(richness_df)[grep('dem_global_30sec', colnames(richness_df))] = 'elevation'
+colnames(richness_df)[grep('hii_v2geo', colnames(richness_df))] = 'hii'
+
+## remove NAs (caused by differing raster extents in the original data)
+richness_df = richness_df[complete.cases(richness_df), ]
+
+head(richness_df)
+
 ```
 
 
+## 3. Model building
+
+Here we begin our model building process; we will start with a GLM and a single predictor, as we have previously, this time using the Poisson family because of our count data. Let's start by looking for a diversity gradient with precipitation.
+
+```{r glm1}
+cols = scales::hue_pal()(4)
+mod1 = glm(richness ~ bio12, family = "poisson", data = richness_df)
+summary(mod1)
+
+prdat = data.frame(bio12 = seq(min(richness_df$bio12), max(richness_df$bio12), length.out=100))
+prdat$richness = predict(mod1, newdata=prdat, type='response')
+
+pts = ggplot(data = richness_df) + geom_point(aes(x=bio12, y=richness), size = 0.05) + 
+	xlab("Annual Precipitation")
+m1_p = pts + geom_line(data = prdat, aes(x=bio12, y=richness), size = 1.4, colour = cols[1])
+m1_p
+```
+
+This model certainly seems inadequate. There is very high scatter around the line, and the relationship seems highly nonlinear. Interestingly, we see an decrease in richness with precipitation.
+
+We could continue as before, fitting polynomials to our data, but instead perhaps it makes sense to fit a different kind of model.
+
+### 3.1 Generalised Additive Models
+
+Generalised additive models are an extension of GLMs If a typical GLM fits a linear equation:
+
+\(
+L(\mathbb{E}(y)) = a + b_1x_1 + b_2x_2 + ... b_kx_k
+\)
+
+then a GAM extends this to fitting *non-linear* (smooth) functions of each x-variable:
+
+\(
+L(\mathbb{E}(y)) = a + f_1(x_1) + f_2(x_2) + ... f_k(x_k)
+\)
+
+Fitting a gam in R is simple.
+
+```{r gam1}
+library(gam)
+mod2 = gam(richness ~ s(bio12), family = "poisson", data = richness_df)
+summary(mod2)
+
+prdat$richness2 = predict(mod2, newdata=prdat, type='response')
+m2_p = m1_p + geom_line(data = prdat, aes(x=bio12, y=richness2), size = 1.4, colour = cols[3])
+m2_p
+```
+
+The GAM produces a much curvier fit, and one that shows a hump in richness at intermediate precipitations. It certainly seems to be a better match to the cloud of points, but there is still a lot of scatter.
+
+Note the `s` function in the GAM call. This stands for "smooth." By specifying this, we are asking for a smooth curve to be fit to a variable. GAM can also fit linear terms, by including them as we do in a GLM. Also note the `df` parameter; this controls how curvy the line can be; if df=1, then the fit would be linear.
+
+### 3.2 Spatial effects and contingency
+
+We notice a lot of empty space on the above plot, an in particular a lot of strange gaps. Some precipitation values are not well-represented in the data, and there are some precip-richness combinations that just don't exist. Thus, there could be a lot of things not related to precipitation that influence how this relationship looks. In particular, because we analyse diversity at every point on the map, we must be very careful in interpreting the results. Certainly p-values are biased and not to be trusted, but even the slope and/or shape of the relationship could be influenced quite a lot by confounding factors.
+
+Naturally, we can account for this by including every important factor in our model. However, this presents at least two problems. First, it is certainly impossible to measure all important factors controlling diversity. Second, some of the factors at this scale are certainly related directly to geography, notably biogeographic explanations for species richness. Our study area includes numerous islands, deserts, and mountain ranges that present significant barriers to the movement of species, so we must consider geography in our analysis. There are a number of ways of fitting spatial models, here we consider a simple one using the GAM smoother. We use a high number of degrees of freedom to allow for lots of geographic contingency, and we include both terms in a single smoother to approximate a spline surface rather than a curve. When we visualise the curve against precipitation, we do it for the geographic centre of our study area
+
+```{r spatial}
+mod3 = gam(richness ~ s(bio12) + s(x, df=5) + s(y, df=5) + s(x*y, df=5), family = "poisson", data = richness_df)
+summary(mod3)
+
+prdat$x = (max(richness_df$x) - min(richness_df$x)) / 2 + min(richness_df$x)
+prdat$y = (max(richness_df$y) - min(richness_df$y)) / 2 + min(richness_df$y)
+prdat$richness3 = predict(mod3, newdata=prdat, type='response')
+m3_p = m2_p + geom_line(data = prdat, aes(x=bio12, y=richness3), size = 1.4, colour = cols[4])
+m3_p
+
+
+```
+
+
+Our new curve is looking much more sensible, richness generally increases with precipitation until it levels off. This suggests the decrease we saw with ther earlier models is due to other variables. Now we will try including them.
+
+### 3.2 Model selection
+
+
+
+
 ## Outline
-
-## Data prep and visualisation
--- human influence index ()
--- elevation ()
--- temperature & precip (already used)
-
-### get all raster layers into the same (3035) projection and extent
 
 
 ## Joining data
