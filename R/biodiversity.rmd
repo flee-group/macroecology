@@ -94,15 +94,14 @@ In addition to the mammal range maps and the climate data from previous exercise
 
 If you are interested in more "raw" land cover data, you could also check out the [Corine Land Cover dataset](https://land.copernicus.eu/pan-european/corine-land-cover/clc2018?tab=download). Note that the Corine data is quite large (100-m resolution for all Europe), and can be a bit difficult for slower computers.
 
-```{r read_data, figure.width = 12}
+```{r read_data}
 elev = raster("../data/biodiv/elevation.grd")
 hii = raster("../data/biodiv/hii.grd")
 
-p1 = c_map + geom_tile(data = as.data.frame(rasterToPoints(elev)), aes(x=x, y=y, fill=dem_global_30sec)) + scale_fill_scico(palette = "grayC", direction = -1) +
-	labs(fill = "Elevation (m)")
-p2 = c_map + geom_tile(data = as.data.frame(rasterToPoints(hii)), aes(x=x, y=y, fill=hii_v2geo)) + scale_fill_scico(palette = "bamako") + 
-	labs(fill="Human Influence Index")
-grid.arrange(p1, p2, nrow=1)
+c_map + geom_tile(data = as.data.frame(rasterToPoints(elev)), aes(x=x, y=y, fill=dem_global_30sec)) + 
+	scale_fill_viridis_c() + labs(fill = "Elevation (m)")
+c_map + geom_tile(data = as.data.frame(rasterToPoints(hii)), aes(x=x, y=y, fill=hii_v2geo)) + 
+	scale_fill_scico(palette = "bamako") + labs(fill="Human Influence Index")
 ```
 
 
@@ -244,30 +243,94 @@ Our new curve is looking much more sensible, richness generally increases with p
 
 ### 3.2 Model selection
 
+Now comes the task of deciding which variables to include. Fortunately, AIC is also well-defined for GAM models, so we can use this as the basis of our comparison. Here we fit a full model, considering elevation, human influence, temperature, precipitation, temperature seasonality, and precipitation seasonality. We then follow this with a series of models dropping a single parameter at a time (not including space, we always retain this), and compare them all in a table using AIC.
+
+Note that these are big models, so it is normal for this code to take some time to run.
+
+```{r aic, warnings = FALSE, results = 'asis'}
+mod_f = gam(richness ~ s(bio1) + s(bio4) + s(bio12) + s(bio15) + s(elevation) + s(hii) + 
+		   	s(x, df=5) + s(y, df=5) + s(x*y, df=5), family = "poisson", data = richness_df)
+mod_dbio1 = update(mod_f, ~.-s(bio1))
+mod_dbio4 = update(mod_f, ~.-s(bio4))
+mod_dbio12 = update(mod_f, ~.-s(bio12))
+mod_dbio15 = update(mod_f, ~.-s(bio15))
+mod_delevation = update(mod_f, ~.-s(elevation))
+mod_dhii = update(mod_f, ~.-s(hii))
+
+aic_tab = data.frame(names = c("full", "-bio1", "-bio4", "-bio12", "-bio15", "-elevation", "-hii"), 
+					 aic = c(AIC(mod_f), AIC(mod_dbio1), AIC(mod_dbio4), AIC(mod_dbio12), AIC(mod_dbio15), AIC(mod_delevation), AIC(mod_dhii)))
+aic_tab$daic = aic_tab$aic - min(aic_tab$aic)
+aicw_num = exp(-0.5 * aic_tab$daic)
+aic_tab$weight = aicw_num / sum(aicw_num)
+
+knitr::kable(aic_tab, digits = 3)
+```
+
+Here we compute AIC for each model, along with $\Delta \mathrm{AIC}$ and the Akaike weight. AIC alone is related to the log likelihood of the model, after penalising for model complexity; a lower AIC indicates a better-fitting model. $\Delta \mathrm{AIC}$ can be used to compare models within a single set. Here, the best model in the set will always have $\Delta \mathrm{AIC} = 0$, and worse models will have increasing $\Delta \mathrm{AIC}$. Although not hard and fast, a reasonable guideline is to consider models where $\Delta \mathrm{AIC} < 2$ as having strong support within the model set, and models with $\Delta \mathrm{AIC} < 10$ have some support (Anderson and Burnham 2004). Finally, Akaike weights can be interpreted as the probability, *conditional on the set of models under evaluation*, that a particular model is the best one.
+
+Here, the full model is best, indicating that all of our variables are useful in describing species richness. Perhaps we could get away with dropping `hii`, but we have lots of data, so it is not really necessary. We can proceed from here to some visualisation and interpretation.
+
+## 4. Interpretation
+
+First, a last note about the Poisson assumption. At the beginning, we noted that for our Poisson model to meet its parametric assumption, the conditional mean and variance must be equal. We can check this using the ratio of the residual deviance to the fitted degrees of freedom. This is known as the *dispersion parameter* and for Poisson models it should be near one.
+
+```{r dispersion}
+round(deviance(mod_f) / mod_f$df.residual, 3)
+```
+
+Slightly less than one, so we can at least assume the dispersion of our model is appropriate.
+
+From here, this section is deliberately short. I first provide some code for producing partial a partial response plot, but I encourage you to explore the other variables on your own. What can we learn about the pattern of mammal species richness? Are any results surprising?
+
+We create a partial response plot for the model using dummy data, as we have done before. Note that we must set each variable to a value in this case, because we have not centred the data to mean=0. We also stick to the geographic centre for interpeting the variables. However, it might also be useful to explore the geographic pattern while holding the other variables constant. How would you do this?
+
+```{r presponse}
+pl_data = data.frame(
+	bio1 = rep(mean(richness_df$bio1), 200),
+	bio4 = mean(richness_df$bio4),
+	bio12 = mean(richness_df$bio12),
+	bio15 = mean(richness_df$bio15),
+	elevation = mean(richness_df$elevation),
+	hii = mean(richness_df$hii),
+	x = (max(richness_df$x) - min(richness_df$x)) / 2 + min(richness_df$x),
+	y = (max(richness_df$y) - min(richness_df$y)) / 2 + min(richness_df$y)
+)
+
+## set up a gradient in a single variable of interest
+pl_data$elevation = seq(min(richness_df$elevation), max(richness_df$elevation), length.out = nrow(pl_data))
+
+## generate predictions
+pl_data$richness = predict(mod_f, newdata = pl_data, type='response')
+
+## plot it
+ggplot(pl_data) + geom_line(aes(x=elevation, y = richness)) + xlab("Elevation") + ylab("Mammal Species Richness")
+
+## don't forget to set the variable back to it's original value before looking at other variables
+pl_data$elevation = mean(richness_df$elevation)
+
+```
 
 
+Finally, here we create a map of species richness, but using only endangered species. If you re-run the analysis, but using endangered species instead of all, how do the species richness patterns change?
 
-## Outline
+```{r endangered}
+
+## produces one map per status
+mamm_r_end = fasterize(mamm, clim_pres[[1]], fun = "sum", background = 0, by = "category")
+
+## adds together near-threatened, vulnerable, endangered, and critically endangered
+mamm_r_end = mamm_r_end[["NT"]] + mamm_r_end[["VU"]] + mamm_r_end[["EN"]] + mamm_r_end[["CR"]]
+
+## make sure oceans have zero instead of NA
+mamm_r_end = mask(mamm_r_end, mamm_r)
+
+## from here, you could repeat the analysis starting from 2.3
+```
 
 
-## Joining data
-They are already joined, because they are raster format
-note that it is problematic to do analyses on this, because geographic effects are confounded
-we have a few possibilities; we could subsample (but not super nice)
-we can use space in the model somehow (try with GAM)
-we can treat our model as exploratory and not try to over interpret
+## References
 
-## extract data as points
-
-## fit a Poisson GLM
-## try with a GAM as well
-	can use s(x,y) to get a 2-d smoothed surface
-	
-a bit about GAM
-subsampling if needed
-
-## Visualising and interpreting
-
+Anderson, D., and K. Burnham. "Model selection and multi-model inference." Second. NY: Springer-Verlag 63.2020 (2004): 10.
 
 
 <br/><br/><br/>
