@@ -84,7 +84,7 @@ We will explore major concepts and advances in macroecology through a combinatio
     <td class="tg-0pky">Macroecological Models<br>Biodiversity Models</td>
     <td class="tg-0pky">Seminar/Lab</td>
     <td class="tg-0pky"><a href="https://science.sciencemag.org/content/297/5586/1548.abstract?casa_token=14kfjHd5yh0AAAAA:0w-_2L_8TCnuRrp6QsqnQoH96bdCnqIkti2Nxd9PLGLcdmgdQqL4fcljZhwiYllDfekuO8ncYni66w">Jetz and Rahbek 2002</a></td>
-    <td class="tg-0pky"></td>
+    <td class="tg-0pky"><a href="biodiversity.html">Biodiversity Modelling</a></td>
   </tr>
   <tr>
     <td class="tg-0pky">Fr 30.04<br>9:15-11</td>
