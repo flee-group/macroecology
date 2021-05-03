@@ -20,6 +20,9 @@ library(gridExtra)
 library(rgdal)
 ```
 
+
+
+
 Today we will be exploring biodiversity using the IUCN rangemaps that we briefly explored in the first exercise. Note that this dataset includes all species for which the IUCN performs an assessment, and that, being expert-derived rangemaps, the resolution is rather coarse. Thus, our interpretations must be made with care, as they will necessarily represent approximate or potential diversity, rather than diversity as measured during (e.g.) a biodiversity inventory.
 
 First let's load and visualise the response variable. The mammal range maps, cropped to the same extent we have had before, are in the `mammal_ranges.rds` file. We can use the `fasterize` function to convert these individual range polygons into a map of species richness (by counting the number of polygons overlapping each grid cell). We use the climate data as the template for our raster.
@@ -104,6 +107,18 @@ c_map + geom_tile(data = as.data.frame(rasterToPoints(hii)), aes(x=x, y=y, fill=
 	scale_fill_scico(palette = "bamako") + labs(fill="Human Influence Index")
 ```
 
+### Reducing the resolution
+
+The default dataset is quite large; here I provide some code to reduce the resolution for you. I do not run this by default here, but you may be interested in running this code if your computer struggles with the analyses.
+
+```{r resample, eval = FALSE}
+## make a template raster
+r = raster(crs = crs(clim_pres), ext = extent(clim_pres), resolution = 0.25)
+
+## reduce to a 0.5 degree grid
+clim_pres = resample(clim_pres, r)
+```
+
 
 ### 2.2 Map projections
 
@@ -122,7 +137,11 @@ res(hii)
 ## climate is the coarsest, so we project it first
 ## I specify a resolution manually to preserve square pixels; 4km is about the size of the largest
 ## pixels in the original dataset
+## for the original-scale raster
 clim_pres = projectRaster(clim_pres, crs="+init=epsg:3035", res=4000)
+
+## if using the coarse-resolution raster
+# clim_pres = projectRaster(clim_pres, crs="+init=epsg:3035", res = 25000)
 
 ## the other rasters will use climate as the template
 elev = projectRaster(elev, clim_pres)
@@ -165,6 +184,13 @@ richness_df = richness_df[complete.cases(richness_df), ]
 head(richness_df)
 
 ```
+
+The objects created here are available on OLAT. If you aren't able to run the code above, just download them and read them in as follows, then continue with the code below.
+
+```{r get_reduced, eval = FALSE}
+
+```
+
 
 
 ## 3. Model building
@@ -316,7 +342,7 @@ Finally, here we create a map of species richness, but using only endangered spe
 ```{r endangered}
 
 ## produces one map per status
-mamm_r_end = fasterize(mamm, clim_pres[[1]], fun = "sum", background = 0, by = "category")
+mamm_r_end = fasterize(mamm_sf, clim_pres[[1]], fun = "sum", background = 0, by = "category")
 
 ## adds together near-threatened, vulnerable, endangered, and critically endangered
 mamm_r_end = mamm_r_end[["NT"]] + mamm_r_end[["VU"]] + mamm_r_end[["EN"]] + mamm_r_end[["CR"]]
