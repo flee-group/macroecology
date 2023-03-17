@@ -26,12 +26,12 @@ We will explore major concepts and advances in macroecology through a combinatio
 .tg .tg-fymr{border-color:inherit;font-weight:bold;text-align:left;vertical-align:top}
 .tg .tg-0pky{border-color:inherit;text-align:left;vertical-align:top}
 </style>
-<table class="tg" style="undefined;table-layout: fixed; width: 720px">
+<table class="tg" style="undefined;table-layout: fixed; width: 840px">
 <colgroup>
 <col style="width: 100px">
-<col style="width: 210px">
-<col style="width: 110px">
+<col style="width: 250px">
 <col style="width: 150px">
+<col style="width: 180px">
 <col style="width: 150px">
 </colgroup>
 <thead>
