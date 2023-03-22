@@ -46,7 +46,7 @@ We will explore major concepts and advances in macroecology through a combinatio
 <tbody>
   <tr>
     <td class="tg-0pky">Wed 22.03<br>9:15-13:00</td>
-    <td class="tg-0pky">Niches, species ranges</td>
+    <td class="tg-0pky">Niches, species ranges<br/>Lecture notes <a href="https://fileshare.uibk.ac.at/f/1545d34b2dc046109178/?dl=1">#1</a> <a href="https://fileshare.uibk.ac.at/f/7cbecde9b0614eb68100/?dl=1">#2</a></td>
     <td class="tg-0pky">Seminarraum 2<br/>(ICT Geb&auml;ude)</td>
     <td class="tg-0pky"><a href="https://www.cell.com/trends/ecology-evolution/fulltext/S0169-5347(18)30186-1">Shade et al. 2018</a></td>
     <td class="tg-0pky"></td>
