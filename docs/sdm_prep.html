@@ -352,7 +352,7 @@ display: none;
 <h1 class="title toc-ignore">Species Distribution Models: Data
 Preparation</h1>
 <h4 class="author">Matthew Talluto</h4>
-<h4 class="date">19.04.2021</h4>
+<h4 class="date">22.03.2023</h4>
 
 </div>
 
@@ -379,7 +379,7 @@ library(fasterize)
 library(raster)</code></pre>
 <pre class="r"><code>## How many occurrences recorded in Austria?
 occ_count(country=&quot;AT&quot;)</code></pre>
-<pre><code>## [1] 8594059</code></pre>
+<pre><code>## [1] 8596880</code></pre>
 <pre class="r"><code>## you can get the ISO codes for other countries with this variable:
 ## isocodes</code></pre>
 <pre class="r"><code>## GBIF has many kinds of occurrence records. Here we ask for species that were observed (i.e., no specimen was taken)
@@ -523,9 +523,8 @@ records in easily accessible places). Thus, we often also need to rely
 on maps drawn by experts. The IUCN makes such maps available for free
 (<a href="https://www.iucnredlist.org/resources/spatial-data-download" class="uri">https://www.iucnredlist.org/resources/spatial-data-download</a>),
 and there are many other such sources online. Access to data is provided
-for approved reasons; our data is available for you to download from
-OLAT. I have saved it in the “data” folder inside my working
-directory.</p>
+for approved reasons; our data is available for you from the instructor.
+I have saved it in the “data” folder inside my working directory.</p>
 <pre class="r"><code>shrew_range = readRDS(&quot;../data/sorex.rds&quot;)
 wmap_r = wmap + geom_sf(data = shrew_range, colour = &quot;#aa1308&quot;, fill=&quot;#F8766D&quot;, alpha=0.5)
 (wmap_rp &lt;- wmap_r + geom_sf(data = shrew_sf, colour=&quot;#00BFC4&quot;, size=0.7))</code></pre>
@@ -639,16 +638,18 @@ wmap_rp + geom_sf(data = ctr, size=4)</code></pre>
 <h2>3 Climate Data</h2>
 <p>If we want to mdoel the range as a function of climate, we also need
 to aquire spatial climate data. There are a number of sources for this;
-we will use the tried-and-true (WorldClim)[<a href="http://worldclim.org/" class="uri">http://worldclim.org/</a>]
-dataset, which we can access directly from the <code>raster</code>
-package. However, there are newer datasets available; in particular the
-(Chelsa Climate Dataset)[<a href="https://chelsa-climate.org" class="uri">https://chelsa-climate.org</a>] is quite good and freely
-available. There is an R-pacakge in development called (ChelsaDL)[<a href="https://github.com/matthewkling/chelsaDL" class="uri">https://github.com/matthewkling/chelsaDL</a>] that gives you
-access to these data directly from R.</p>
-<p>We will use the (bioclim)[<a href="http://www.worldclim.org/bioclim" class="uri">http://www.worldclim.org/bioclim</a>] climate variables for
-our analysis; be sure to read over the link for information on what
-these variables represent and why they are useful in SDM applications.
-We get 19 (!) variables in bioclim.</p>
+we will use the tried-and-true <a href="http://worldclim.org/">WorldClim</a> dataset, which we can access
+directly from the <code>raster</code> package. However, there are newer
+datasets available; in particular the <a href="https://chelsa-climate.org">Chelsa Climate Dataset</a> is quite
+good and freely available. There is an R-pacakge in development called
+<a href="https://github.com/matthewkling/chelsaDL">ChelsaDL</a> that
+gives you access to these data directly from R.</p>
+<p>We will use the <a href="https://www.worldclim.org/data/bioclim.html">bioclim</a> climate
+variables for our analysis; be sure to read over the link for
+information on what these variables represent and why they are useful in
+SDM applications. We get 19 (!) variables in bioclim. Note that the
+Chelsea dataset <a href="https://chelsa-climate.org/bioclim/">provides
+even more bioclim variables</a>.</p>
 <pre class="r"><code>## make sure the directory exists
 path = &quot;../data/clim&quot;
 dir.create(path, showWarnings = FALSE)

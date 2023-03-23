@@ -1,7 +1,7 @@
 ---
 title: "Species Distribution Models: Data Preparation"
 author: "Matthew Talluto"
-date: "19.04.2021"
+date: "22.03.2023"
 output: html_document
 ---
 
@@ -149,7 +149,7 @@ The help files and vignettes for CoordinateCleaner detail other issues that can 
 
 ## 2. Range Maps
 
-Point data are helpful for describing specific occurrences of a species, but they often come with biases (e.g., there may be many more records in easily accessible places). Thus, we often also need to rely on maps drawn by experts. The IUCN makes such maps available for free (https://www.iucnredlist.org/resources/spatial-data-download), and there are many other such sources online. Access to data is provided for approved reasons; our data is available for you to download from OLAT. I have saved it in the "data" folder inside my working directory.
+Point data are helpful for describing specific occurrences of a species, but they often come with biases (e.g., there may be many more records in easily accessible places). Thus, we often also need to rely on maps drawn by experts. The IUCN makes such maps available for free (https://www.iucnredlist.org/resources/spatial-data-download), and there are many other such sources online. Access to data is provided for approved reasons; our data is available for you from the instructor. I have saved it in the "data" folder inside my working directory.
 
 ```{r iucn_map}
 shrew_range = readRDS("../data/sorex.rds")
@@ -224,9 +224,9 @@ wmap_rp + geom_sf(data = ctr, size=4)
 
 ## 3 Climate Data
 
-If we want to mdoel the range as a function of climate, we also need to aquire spatial climate data. There are a number of sources for this; we will use the tried-and-true (WorldClim)[http://worldclim.org/] dataset, which we can access directly from the `raster` package. However, there are newer datasets available; in particular the (Chelsa Climate Dataset)[https://chelsa-climate.org] is quite good and freely available. There is an R-pacakge in development called (ChelsaDL)[https://github.com/matthewkling/chelsaDL] that gives you access to these data directly from R.
+If we want to mdoel the range as a function of climate, we also need to aquire spatial climate data. There are a number of sources for this; we will use the tried-and-true [WorldClim](http://worldclim.org/) dataset, which we can access directly from the `raster` package. However, there are newer datasets available; in particular the [Chelsa Climate Dataset](https://chelsa-climate.org) is quite good and freely available. There is an R-pacakge in development called [ChelsaDL](https://github.com/matthewkling/chelsaDL) that gives you access to these data directly from R.
 
-We will use the (bioclim)[http://www.worldclim.org/bioclim] climate variables for our analysis; be sure to read over the link for information on what these variables represent and why they are useful in SDM applications. We get 19 (!) variables in bioclim.
+We will use the [bioclim](https://www.worldclim.org/data/bioclim.html) climate variables for our analysis; be sure to read over the link for information on what these variables represent and why they are useful in SDM applications. We get 19 (!) variables in bioclim. Note that the Chelsea dataset [provides even more bioclim variables](https://chelsa-climate.org/bioclim/).
 
 ```{r bioclim}
 ## make sure the directory exists
@@ -236,7 +236,7 @@ clim = getData("worldclim", var="bio", res=10, download=T, path=path)
 plot(clim)
 ```
 
-We have already set the appropriate resolution using the `res` argument. However, the `raster` package provides a lot of functions that are useful for manipulating these data in case we need to change resolutions, extents, etc. It is useful to brows the help for these to know they are available:
+We have already set the appropriate resolution using the `res` argument. However, the `raster` package provides a lot of functions that are useful for manipulating these data in case we need to change resolutions, extents, etc. It is useful to browse the help for these to know they are available:
 
 * `?resample`
 * `?aggregate`
