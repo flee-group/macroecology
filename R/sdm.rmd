@@ -1,7 +1,7 @@
 ---
 title: "Fitting an SDM"
 author: "Matthew Talluto"
-date: "23.04.2021"
+date: "24.03.2023"
 output: html_document
 ---
 
@@ -12,9 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 First some preparation. Today's exercise requires a few more packages, so you will want to run these lines if you don't have the packages installed yet.
 
 ```{r packages, eval = FALSE}
-install.packages(c("remotes", "rnaturalearth", "scico", "corrplot", "PresenceAbsence", "gridExtra", "reshape2"))
-remotes::install_github("ropensci/rnaturalearthdata")
-remotes::install_github("ropensci/rnaturalearthhires")
+install.packages(c("remotes", "rnaturalearth", "rnaturalearthdata", "scico", "corrplot", "PresenceAbsence", "gridExtra", "reshape2"))
 ```
 
 Now we load required packages.
@@ -53,13 +51,13 @@ We have already done some data preparation in the previous exercise, but we shou
 	
 We should also consider the appropriate spatial extent for modelling. In the case of the alpine shrew, we probably don't care about the entire globe, in which case we should crop the climate data to include our area of interest.
 
-As a motivating example for this study, perhaps we want to know what will happen to the range size of our shrew following climate change. This clarifies our modelling approach: predict the shrew range using contemporary climate, use the model to predict the present and future ranges, and compute the size of each.
+As a motivating example for this study, perhaps we want to know what will happen to the range size of our shrew following climate change. This clarifies our modelling approach: find the shrew range using contemporary climate, use the model to predict the present and future ranges, and compute the size of each.
 	
 ## 2. Data preparation
 
 We begin with the data already prepared from the previous exercise, with some important additions. Today we will start by fitting a **presence-absence** SDM, however our gbif-sourced data is presence-only. For the purposes of this exercise, I have augmented this dataset with **pseudo absences**. There is an extensive literature on how to select pseudo absences for SDMs, so before doing this for your own models, I strongly recommend reading up. Good starting references are Elith and Leathwick (2009), Franklin (2010), and especially Barbet‐Massin et al (2012).
 
-Here we load two datasets (available on OLAT): the cleaned presence-only dataset we created last time, and the augmented presence-absence dataset. Both are tables of class `sf`, meaning they contain attributes and spatial information.
+Here we load two datasets (available from me directly): the cleaned presence-only dataset we created last time, and the augmented presence-absence dataset. Both are tables of class `sf`, meaning they contain attributes and spatial information.
 
 ```{r presence}
 sorex_po = readRDS("../data/sorex_po.rds")
@@ -74,12 +72,16 @@ countries = ne_countries(scale="medium", returnclass = "sf")
 clim_pres = stack("../data/bioclim_pres.grd")
 clim_pres_pts = as.data.frame(rasterToPoints(clim_pres))
 
+# there are some problems with the natural earth geometry, so we fix them
+# then we crop the dataset
+countries = st_make_valid(countries)
 countries = st_crop(countries, clim_pres)
 
 c_map = ggplot(countries) + geom_sf(colour='black', fill='white')
 c_map + geom_tile(data = clim_pres_pts, aes(x=x, y=y, fill=bio1), alpha = 0.8) + 
 	scale_fill_scico(palette = "lajolla", direction = -1) + labs(fill="Mean Annual\nTemperature") + 
-	geom_sf(data = sorex_pa, aes(colour = presence), size=0.4)
+	geom_sf(data = sorex_pa, aes(colour = presence), size=0.4) + 
+	scale_colour_manual(values = c( "#cab2d6", "#1f78b4"))
 
 ```
 
@@ -119,8 +121,9 @@ sapply(colnames, function(i) sd(sorex_pa_sc[[i]]))
 ## 3 Model Fitting
 
 During the conceptualisation phase, we decided on our modelling goals, now we must choose a model type and select predictor variables that allow us to achieve those goals. We will start by fitting a generalised linear model. GLMs are a common and flexible category of parametric models; simple linear regression, multiple regression, logistic regression, and analysis of variance are all special cases of the GLM. Two important concepts to be aware of for GLMs are:
-	- The **liklihood distribution** (called the `family` in R), determined by the statistical distribution producing our observations (in this case, either presence or absence).
-	- The **link** function, which maps a linear regression equation onto a (often nonlinear) function that makes sense for the parameters of the likihood distribution.
+
+- The **liklihood distribution** (called the `family` in R), determined by the statistical distribution producing our observations (in this case, either presence or absence).
+- The **link** function, which maps a linear regression equation onto a (often nonlinear) function that makes sense for the parameters of the likihood distribution.
 
 Mathematically, we can think about a parameter of our distribution $\theta$, which we fit to a linear model using the link function $L$:
 
@@ -311,16 +314,16 @@ Model assessment is a rather large topic, so I only present some selected topics
 
 Previously, we fit a **response curve** to a single variable, showing how the probability of presence changed as the temperature changed. In the lecture, we have also seen **response surfaces** with two variables. With more than two variables, visualisation becomes difficult. More commonly, we fit **partial response curves**; this shows how the probability of presence (or suitability, for presence-only models) changes as a single variable changes, while holding all other variables constant at their mean.
 
-	**side note:** On suitability vs probability
-	
-	The binomial GLM models the probability of observing the outcome (in this case, that the species is present)
-	as a function of the predictor variables. However, when we lack true observations of absence, these probabilities
-	cannot be reliably calibrated. Therefore, the predictions of binomial SDMs can only be properly referred to as
-	probabilities if we have true absences, if there is a well-designed sampling protocol with good environmental
-	and geographic coverage, if the predictor variables are restricted to an apprpriate spatial domain, and if
-	the spatial scale of sampling and prediction are comparable and appropriate. In all other cases, model
-	predictions are better referred to as **suitabilities** instead of probabilities.
-	
+#### Side note: On suitability vs probability
+
+The binomial GLM models the probability of observing the outcome (in this case, that the species is present)
+as a function of the predictor variables. However, when we lack true observations of absence, these probabilities
+cannot be reliably calibrated. Therefore, the predictions of binomial SDMs can only be properly referred to as
+probabilities if we have true absences, if there is a well-designed sampling protocol with good environmental
+and geographic coverage, if the predictor variables are restricted to an apprpriate spatial domain, and if
+the spatial scale of sampling and prediction are comparable and appropriate. In all other cases, model
+predictions are better referred to as **suitabilities** instead of probabilities.
+
 ```{r response}
 ## the variables in our model
 vars = c("bio1", "bio2", "bio4", "bio12")
@@ -372,10 +375,10 @@ clim_fut = stack("../data/bioclim_2060.grd")
 
 In order to make maps, we need to take a few steps.
 
-	1. Convert the raster to a data.frame
-	2. Re-scale the climate variables, as we did for the predictors.
-	3. Compute the suitability and the predicted presence-absence for present and future
-	4. Convert the results from step 3 back to a raster (optional; we skip it because ggplot uses the data frame instead)
+1. Convert the raster to a data.frame
+2. Re-scale the climate variables, as we did for the predictors.
+3. Compute the suitability and the predicted presence-absence for present and future
+4. Convert the results from step 3 back to a raster (optional; we skip it because ggplot uses the data frame instead)
 	
 ```{r makeraster, fig.width=10, fig.height=10}
 # 1. data.frame
@@ -402,9 +405,9 @@ p2 = c_map + geom_tile(data = clim_fut_df, aes(x=x, y=y, fill=suitability), alph
 	scale_fill_scico(palette = "lapaz", direction = 1) + labs(fill="Suitability") + 
 	xlab("") + ylab("")
 p3 = c_map + geom_tile(data = clim_pres_df, aes(x=x, y=y, fill=presence), alpha = 0.9) + 
-	guides(fill=FALSE) + ggtitle("Current Range") + xlab("") + ylab("")
+	guides(fill='none') + ggtitle("Current Range") + xlab("") + ylab("")
 p4 = c_map + geom_tile(data = clim_fut_df, aes(x=x, y=y, fill=presence), alpha = 0.9) + 
-	guides(fill=FALSE) + ggtitle("Future Range") + xlab("") + ylab("")
+	guides(fill='none') + ggtitle("Future Range") + xlab("") + ylab("")
 
 grid.arrange(p1, p2, p3, p4, nrow=2)
 ```
