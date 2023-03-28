@@ -61,9 +61,9 @@ We will explore major concepts and advances in macroecology through a combinatio
   
   <tr>
     <td class="tg-0pky">Fri 24.03<br>9:15-13:00</td>
-    <td class="tg-0pky">Metapopulations<br>Biodiversity</td>
+    <td class="tg-0pky">Species Distribution Modelling II</td>
     <td class="tg-0pky">Seminarraum 2<br/>(ICT Geb&auml;ude)</td>
-    <td class="tg-0pky"><a href="https://www.nature.com/articles/s41559-017-0182">Talluto et al. 2017</a></td>
+    <td class="tg-0pky"></td>
     <td class="tg-0pky"></td>
   </tr>
 <tr style="border-bottom: double gray">
@@ -76,24 +76,25 @@ We will explore major concepts and advances in macroecology through a combinatio
   
   <tr>
     <td class="tg-0pky">Wed 29.03<br>9:15-12:30</td>
-   <td class="tg-0pky">The Eltonian Niche<br>Functional Diversity</td>
+   <td class="tg-0pky">Metapopulations<br>Biodiversity<br/>Lecture notes <a href="https://fileshare.uibk.ac.at/f/99195db2e6f64da4a3a2/?dl=1">#3</a> <a href="https://fileshare.uibk.ac.at/f/6a0db75e6fbd4d47bf01/?dl=1">#4</a></td>
     <td class="tg-0pky">RR 14</td>
-    <td class="tg-0pky"><a href="https://www.nature.com/articles/nature11631">Jetz et al. 2012</a></td>
+    <td class="tg-0pky"><a href="https://science.sciencemag.org/content/297/5586/1548.abstract">Jetz and Rahbek 2002</a></td> 
+    <!--<a href="https://www.nature.com/articles/s41559-017-0182">Talluto et al. 2017</a>-->
     <td class="tg-0pky"></td>
   </tr>
 <tr style="border-bottom: double gray">
     <td class="tg-0pky">Wed 29.03<br>13:30-16:00</td>
     <td class="tg-0pky">Macroecological Models<br>Biodiversity Models</td>
     <td class="tg-0pky">Seminarraum<br/>Biologie</td>
-    <td class="tg-0pky"><a href="https://science.sciencemag.org/content/297/5586/1548.abstract">Jetz and Rahbek 2002</a></td>
+    <td class="tg-0pky"></td>
     <td class="tg-0pky"><a href="biodiversity.html">Biodiversity Modelling</a></td>  
  </tr>
 
   <tr>
     <td class="tg-0pky">Fri 31.03<br>9:15-11:00</td>
-    <td class="tg-0pky">Conservation Macroecology</td>
+    <td class="tg-0pky">Functional Diversity<br/>Conservation Macroecology</td>
     <td class="tg-0pky">Seminarraum 2<br/>(ICT Geb&auml;ude)</td>
-    <td class="tg-0pky"><a href="https://www.nature.com/articles/nature14324/briefing/signup/?origin=Nature&originReferralPoint=EmailBanner">Newbold et al. 2015</a></td>
+    <td class="tg-0pky"><a href="https://www.nature.com/articles/nature11631">Jetz et al. 2012</a><br/><a href="https://www.nature.com/articles/nature14324/briefing/signup/?origin=Nature&originReferralPoint=EmailBanner">Newbold et al. 2015</a></td>
     <td class="tg-0pky"></td>
   </tr>
 <tr style="border-bottom: double gray">
