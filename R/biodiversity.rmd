@@ -31,7 +31,11 @@ First let's load and visualise the response variable. The mammal range maps, cro
 mamm = readRDS("../data/biodiv/mammal_ranges.rds")
 clim_pres = stack("../data/bioclim_pres.grd")
 mamm_r = fasterize(mamm, clim_pres[[1]], fun = "sum", background = NA)
-suppressMessages(countries <- st_crop(ne_countries(scale="medium", returnclass = "sf"), mamm_r))
+
+# fix a topological error with the countries
+countries = st_make_valid(ne_countries(scale="medium", returnclass = "sf"))
+# then crop countries to the data range
+countries = st_crop(countries, mamm_r)
 
 mamm_pl = as.data.frame(rasterToPoints(mamm_r))
 c_map = ggplot(countries) + geom_sf(colour='black', fill='white') + xlab("") + ylab("")
@@ -339,7 +343,7 @@ pl_data$elevation = mean(richness_df$elevation)
 
 Finally, here we create a map of species richness, but using only endangered species. If you re-run the analysis, but using endangered species instead of all, how do the species richness patterns change?
 
-```{r endangered}
+```{r endangered, eval = FALSE}
 
 ## produces one map per status
 mamm_r_end = fasterize(mamm_sf, clim_pres[[1]], fun = "sum", background = 0, by = "category")
