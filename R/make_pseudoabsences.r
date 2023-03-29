@@ -65,4 +65,4 @@ plot(absences, add = TRUE, pch = 16, cex = 0.7, col = "black")
 # combine the two
 pa = rbind(presences, absences)
 # save
-writeRDS(pa, "data/pres_abs_data.rds")
+saveRDS(pa, "data/pres_abs_data.rds")
