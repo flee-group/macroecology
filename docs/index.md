@@ -92,7 +92,7 @@ We will explore major concepts and advances in macroecology through a combinatio
 
   <tr>
     <td class="tg-0pky">Fri 31.03<br>9:15-11:00</td>
-    <td class="tg-0pky">Functional Diversity<br/>Conservation Macroecology</td>
+    <td class="tg-0pky">Functional Diversity<br/>Conservation Macroecology<br/>Lecture notes <a href="https://fileshare.uibk.ac.at/f/de11186bde3c46789318/?dl=1">#5</a></td>
     <td class="tg-0pky">Seminarraum 2<br/>(ICT Geb&auml;ude)</td>
     <td class="tg-0pky"><a href="https://www.nature.com/articles/nature11631">Jetz et al. 2012</a><br/><a href="https://www.nature.com/articles/nature14324/briefing/signup/?origin=Nature&originReferralPoint=EmailBanner">Newbold et al. 2015</a></td>
     <td class="tg-0pky"></td>
