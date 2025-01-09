@@ -1,6 +1,6 @@
 ---
 title: "Boidiversity Modelling"
-author: "Matthew Talluto"
+author: "Lauren Talluto"
 date: "27.04.2021"
 output: html_document
 ---

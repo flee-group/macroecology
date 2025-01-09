@@ -1,6 +1,6 @@
 ---
 title: "Species Distribution Models: Data Preparation"
-author: "Matthew Talluto"
+author: "Lauren Talluto"
 date: "22.03.2023"
 output: html_document
 ---
