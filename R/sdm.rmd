@@ -1,6 +1,6 @@
 ---
 title: "Fitting an SDM"
-author: "Matthew Talluto"
+author: "Lauren Talluto"
 date: "24.03.2023"
 output: html_document
 ---

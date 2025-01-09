@@ -1,4 +1,4 @@
-**Instructor**: Matthew Talluto
+**Instructor**: Lauren Talluto
 
 **Office**: Technikerstraße 25, Room 506
 
