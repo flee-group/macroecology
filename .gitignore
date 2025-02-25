@@ -41,3 +41,7 @@ vignettes/*.pdf
 *.Rproj
 
 data/*
+
+# github pages local preview
+docs/Gemfile.lock
+docs/_site/*
