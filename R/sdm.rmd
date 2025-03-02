@@ -1,7 +1,7 @@
 ---
 title: "Fitting an SDM"
-author: "Lauren Talluto"
-date: "24.03.2023"
+author: "Lauren Talluto & Jan Martini"
+date: "02.03.2025"
 output: html_document
 ---
 
@@ -19,7 +19,8 @@ Now we load required packages.
 
 ```{r load, message=FALSE}
 library(sf)
-library(raster)
+library(terra)
+library(tidyterra)
 library(rnaturalearth)
 library(scico)
 library(corrplot)
@@ -69,28 +70,33 @@ From [WorldClim](https://worldclim.org), I have prepared climate layers for rece
 
 ```{r shrewpa_map, warning = FALSE}
 countries = ne_countries(scale="medium", returnclass = "sf")
-clim_pres = stack("../data/bioclim_pres.grd")
-clim_pres_pts = as.data.frame(rasterToPoints(clim_pres))
+clim_pres = rast("../data/bioclim_pres.grd")
 
 # there are some problems with the natural earth geometry, so we fix them
+# then we re-project the raster dataset to match countries
 # then we crop the dataset
 countries = st_make_valid(countries)
+clim_pres = project(clim_pres, countries)
 countries = st_crop(countries, clim_pres)
 
-c_map = ggplot(countries) + geom_sf(colour='black', fill='white')
-c_map + geom_tile(data = clim_pres_pts, aes(x=x, y=y, fill=bio1), alpha = 0.8) + 
-	scale_fill_scico(palette = "lajolla", direction = -1) + labs(fill="Mean Annual\nTemperature") + 
+
+ggplot() + geom_spatraster(data = clim_pres, aes(fill=bio1)) + 
+	scale_fill_scico(palette = "lajolla", direction = -1, na.value = "transparent") + 
+	geom_sf(data = countries, colour='black', fill=NA) + 
+	labs(fill="Mean Annual\nTemperature") + 
 	geom_sf(data = sorex_pa, aes(colour = presence), size=0.4) + 
 	scale_colour_manual(values = c( "#cab2d6", "#1f78b4"))
-
 ```
 
 ### 2.1 Extracting the climate data
 
-As before, we must intersect the point occurrences and the climate data. This will give us the presence-absence dataset, but with all of the climate variables.
+As before, we must intersect the point occurrences and the climate data. This will give us the presence-absence dataset, but with all of the climate variables. There are a few alignment issues that result in a few NAs, we remove those.
 
 ```{r intersect}
 sorex_pa = cbind(extract(clim_pres, sorex_pa), sorex_pa)
+# drop NAs
+i = which(!is.na(sorex_pa$bio1))
+sorex_pa = sorex_pa[i,]
 head(sorex_pa)
 ```
 
@@ -189,12 +195,11 @@ Now we would like to fit a model with multiple variables. However, many environm
 
 ```{r corplot}
 ## first we create a correlation matrix; use spearman for safety
-## we first extract just the predictors
-i = which(colnames(sorex_pa_sc) == "presence")
+## we first extract just the predictors and then drop the geometry
+i = which(colnames(sorex_pa_sc) %in% c("presence", "ID", "geometry"))
 predictors = sorex_pa_sc[, -i]
-st_geometry(predictors) = NULL
 
-cor_mat = cor(predictors, method='spearman')
+cor_mat = cor(predictors, method='spearman', use = "complete.obs")
 corrplot.mixed(cor_mat, tl.pos='lt', tl.cex=0.6, number.cex=0.5, addCoefasPercent=T)
 ```
 
@@ -298,7 +303,7 @@ AIC(reduced_mod) - AIC(update(reduced_mod, ~.-I(bio15^2)))
 reduced_mod = update(reduced_mod, ~.-I(bio15^2))
 ```
 
-We see with `bio15` that we could either add the lienar term or drop the quadratic one, the effect is very similar. Removing the quadratic term is slightly better, and also keeps the model simpler, so we do this.
+We see with `bio15` that we could either add the lienar term or drop the quadratic one, the effect is very similar. Removing the quadratic term is slightly worse, but it also keeps the model simpler, so we do this.
 
 Now our model looks like this. Note that this model is quite large, and contains curvilinear terms; thus it is not so easy to understand just from the parameters how the range of our shrew relates to each predictor.
 
@@ -370,7 +375,7 @@ From here, we could compute sensitivity, specificity, and other measures such as
 Our last step is to make some maps. Recall that we have a climate dataset, `clim_pres`. We can also load in the future climate.
 
 ```{r clim_fut}
-clim_fut = stack("../data/bioclim_2060.grd")
+clim_fut = rast("../data/bioclim_2060.grd")
 ```
 
 In order to make maps, we need to take a few steps.
@@ -382,8 +387,8 @@ In order to make maps, we need to take a few steps.
 	
 ```{r makeraster, fig.width=10, fig.height=10}
 # 1. data.frame
-clim_pres_df = as.data.frame(rasterToPoints(clim_pres))
-clim_fut_df = as.data.frame(rasterToPoints(clim_fut))
+clim_pres_df = as.data.frame(clim_pres, xy = TRUE)
+clim_fut_df = as.data.frame(clim_fut, xy = TRUE)
 
 # 2. Rescale
 for(v in names(clim_pres)) {
@@ -394,20 +399,42 @@ for(v in names(clim_pres)) {
 # 3. Predict
 clim_pres_df$suitability = predict(reduced_mod, newdata = clim_pres_df, type='response')
 clim_fut_df$suitability = predict(reduced_mod, newdata = clim_fut_df, type='response')
-clim_pres_df$presence = ifelse(clim_pres_df$suitability > thold, 'present', NA)
-clim_fut_df$presence = ifelse(clim_fut_df$suitability > thold, 'present', NA)
+clim_pres_df$presence = ifelse(clim_pres_df$suitability > thold, 1, NA)
+clim_fut_df$presence = ifelse(clim_fut_df$suitability > thold, 1, NA)
+
+# 4. Convert back to raster
+pr_suitability = rast(clim_pres_df[, c('x', 'y', 'suitability')], 
+					  type = 'xyz', crs = crs(clim_pres))
+fut_suitability = rast(clim_fut_df[, c('x', 'y', 'suitability')], 
+					   type = 'xyz', crs = crs(clim_pres))
+pr_presence = rast(clim_pres_df[, c('x', 'y', 'presence')], 
+				   type = 'xyz', crs = crs(clim_pres))
+fut_presence = rast(clim_fut_df[, c('x', 'y', 'presence')], 
+					type = 'xyz', crs = crs(clim_pres))
 
 
-p1 = c_map + geom_tile(data = clim_pres_df, aes(x=x, y=y, fill=suitability), alpha = 0.9) + 
-	scale_fill_scico(palette = "lapaz", direction = 1) + labs(fill="Suitability") + 
-	xlab("") + ylab("")
-p2 = c_map + geom_tile(data = clim_fut_df, aes(x=x, y=y, fill=suitability), alpha = 0.9) + 
-	scale_fill_scico(palette = "lapaz", direction = 1) + labs(fill="Suitability") + 
-	xlab("") + ylab("")
-p3 = c_map + geom_tile(data = clim_pres_df, aes(x=x, y=y, fill=presence), alpha = 0.9) + 
-	guides(fill='none') + ggtitle("Current Range") + xlab("") + ylab("")
-p4 = c_map + geom_tile(data = clim_fut_df, aes(x=x, y=y, fill=presence), alpha = 0.9) + 
-	guides(fill='none') + ggtitle("Future Range") + xlab("") + ylab("")
+# 5. Plot
+p1 = ggplot() + geom_spatraster(data = pr_suitability, aes(fill=suitability)) + 
+	scale_fill_scico(palette = "lapaz", direction = 1, na.value = "transparent") + 
+	labs(fill="Suitability") + 
+	geom_sf(data = countries, colour='black', fill=NA)
+
+p2 = ggplot() + geom_spatraster(data =fut_suitability, aes(fill=suitability)) + 
+	scale_fill_scico(palette = "lapaz", direction = 1, na.value = "transparent") + 
+	labs(fill="Suitability") + 
+	geom_sf(data = countries, colour='black', fill=NA) 
+
+p3 = ggplot() + geom_sf(data = countries, colour=NA, fill="white") + 
+	geom_spatraster(data = pr_presence, aes(fill=presence)) + 
+	scale_fill_gradient(low = "#b41f1f", high = "#b41f1f", na.value = "transparent") + 
+	ggtitle("Current Range") + guides(fill='none') + 
+	geom_sf(data = countries, colour='black', fill=NA)
+
+p4 = ggplot() + geom_sf(data = countries, colour=NA, fill="white") + 
+	geom_spatraster(data = fut_presence, aes(fill=presence)) + 
+	scale_fill_gradient(low = "#b41f1f", high = "#b41f1f", na.value = "transparent") + 
+	ggtitle("Current Range") + guides(fill='none') + 
+	geom_sf(data = countries, colour='black', fill=NA)
 
 grid.arrange(p1, p2, p3, p4, nrow=2)
 ```
@@ -419,21 +446,20 @@ Note that our model includes many areas from which the shrew is likely absent (p
 We can now return to our previous function for computing range size to compare present and future range sizes. For this, we will convert our data frame predictions back into a raster.
 
 ```{r}
-pres_range = clim_pres_df[, c('x', 'y', 'presence')]
-coordinates(pres_range) = c('x', 'y')
-crs(pres_range) = crs(clim_pres)
-gridded(pres_range) = TRUE
-pres_range = raster(pres_range)
+#' Input: a raster containing a species range
+#' NA cells are out of range, all others are in range
+range_size = function(r, in_units = "m^2", out_units = "km^2") {
+	cs = cellSize(r)
+	mcs = mask(cs, r)
+	vals = values(mcs)
+	rs = units::set_units(sum(vals, na.rm = TRUE), in_units, mode = "standard")
+	if(in_units != out_units)
+		rs = units::set_units(rs, out_units, mode = "standard")
+	rs
+}
 
-fut_range = clim_fut_df[, c('x', 'y', 'presence')]
-coordinates(fut_range) = c('x', 'y')
-crs(fut_range) = crs(clim_pres)
-gridded(fut_range) = TRUE
-fut_range = raster(fut_range)
-
-
-cat("Present:", sum(values(area(pres_range, na.rm = TRUE)), na.rm=TRUE), "\n",
-	"Future:", sum(values(area(fut_range, na.rm = TRUE)), na.rm=TRUE), "\n")
+cat("Present:", range_size(pr_presence), "km^2\n",
+	"Future:", range_size(fut_presence), "km^2\n")
 ```
 
 We predict by 2060 that more than half of the suitable habitat will be gone.

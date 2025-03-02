@@ -1,7 +1,7 @@
 ---
 title: "Species Distribution Models: Data Preparation"
-author: "Lauren Talluto"
-date: "22.03.2023"
+author: "Lauren Talluto & Jan Martini"
+date: "02.03.2025"
 output: html_document
 ---
 
@@ -18,12 +18,12 @@ We will use the [Global Biodiversity Information Facility](https://www.gbif.org/
 ```{r, message = FALSE}
 # here is a list of packages you need for this exercise
 library(rgbif)
-library(maptools)
+library(rnaturalearth)
 library(sf)
 library(CoordinateCleaner)
 library(ggplot2)
-library(fasterize)
-library(raster)
+library(terra)
+library(geodata)
 ```
 
 
@@ -74,11 +74,10 @@ GBIF is a public database, so it's not uncommon to find incorrect records. It's 
 
 
 ```{r map}
-data(wrld_simpl)
-wrld_simpl_sf = st_as_sf(wrld_simpl)
+countries = ne_countries(scale="medium", returnclass = "sf")
 shrew_sf = st_as_sf(shrew, coords = c("decimalLongitude", "decimalLatitude"), crs = 4326)
 
-ggplot(wrld_simpl_sf) + 
+ggplot(countries) + 
 	geom_sf(colour='black', fill='white') + xlim(c(5,130)) + ylim(c(20,60)) + 
 	geom_sf(data = shrew_sf, col='red')
 
@@ -128,7 +127,7 @@ shrew_clean = clean_coordinates(shrew, lon="decimalLongitude", lat="decimalLatit
 ```{r map2}
 shrew_sf = st_as_sf(shrew, coords = c("decimalLongitude", "decimalLatitude"), crs = 4326)
 shrew_sf$status = ifelse(shrew_clean$.summary, "ok", "flagged")
-wmap = ggplot(wrld_simpl_sf) + 
+wmap = ggplot(countries) + 
 	geom_sf(colour='black', fill='white') + xlim(c(5,130)) + ylim(c(20,60))  + xlab("") + ylab("")
 
 wmap + geom_sf(data = shrew_sf, aes(colour = status))
@@ -140,7 +139,7 @@ The outlier in China is flagged, but all other records seem ok, so we remove the
 shrew = shrew[shrew_clean$.summary,]
 shrew_sf = st_as_sf(shrew, coords = c("decimalLongitude", "decimalLatitude"), crs = 4326)
 
-wmap = ggplot(wrld_simpl_sf) + 
+wmap = ggplot(countries) + 
 	geom_sf(colour='black', fill='white') + xlim(c(5,27)) + ylim(c(40,55))  + xlab("") + ylab("")
 wmap + geom_sf(data = shrew_sf, colour="#00BFC4", size=0.7)
 ```
@@ -161,23 +160,22 @@ For the current exercise, we are mostly interested in viewing the locations with
 
 ### 2.1 Producing raster maps
 
-We use the excellent `fasterize` package to produce a raster from our range map. Note that the `fasterize()` function works similarly to the `rasterize()` function from the `raster` package, but, as the name implies, is usually much faster.
+We will use the `terra` package to produce a raster from our range map. 
 
 First we must create a template raster that tells us at what resolution we want our raster map to be in. The problem is that it is unclear at which spatial resolution the range maps accurately represent species occurrences. Hurlbert and Jetz (2007) and Jetz, et al (2012) define the minimum spatial resolution as 100-200km (1-2°), although also resolutions of 50km (0.5°) and finer have been used (Krosby et al. 2015). We will use a (relatively fine) resolution of 10 arcminutes to allow us to intersect the raster range map with climate data.
 
 
 
-```{r fasterize}
+```{r rasterize}
 
 ## Create a template raster
-template = raster(extent(shrew_range), resolution = 1/6, crs = crs(shrew_sf))
-shrew_range_r = fasterize(shrew_range, template)
+template = rast(ext(shrew_range), resolution = 1/6, crs = crs(shrew_sf))
+shrew_range_r = rasterize(shrew_range, template)
 
-## change it to a point file just for plotting
-shrew_range_pts = as.data.frame(rasterToPoints(shrew_range_r))
-colnames(shrew_range_pts) = c("x", "y", "val")
-
-wmap_r + geom_tile(data = shrew_range_pts, aes(x=x, y=y), fill = "#619CFF", alpha = 0.5, show.legend = FALSE)
+## convert to dataframe for plotting
+wmap_r + geom_tile(data = as.data.frame(shrew_range_r, xy = TRUE), 
+			  aes(x=x, y=y), fill = "#619CFF", alpha = 0.5, 
+			  show.legend = FALSE)
 ```
 
 ### 2.1 Range size
@@ -198,8 +196,14 @@ area_m2 = sum(st_area(shrew_range)) ## sum because there are multiple polygons
 units::set_units(area_m2, "km^2")
 
 ## next with raster
-## we must remove NAs, otherwise we get only the area of the entire square raster
-sum(values(area(shrew_range_r, na.rm = TRUE)), na.rm=TRUE) 
+# the cell size itself is a raster; what happens when you plot it?
+cell_size_r = cellSize(shrew_range_r)
+# we only want to count cells that are in the range, so we mask NAs
+cell_size_r = mask(cell_size_r, shrew_range_r)
+# then we extract the values, sum them, and convert units
+range_size = units::set_units(sum(values(cell_size_r), na.rm = TRUE), "m^2")
+# convert to km^2
+units::set_units(range_size, "km^2")
 ```
 
 **Notice that the two results are very close, but not identical. Why is this?**
@@ -224,19 +228,22 @@ wmap_rp + geom_sf(data = ctr, size=4)
 
 ## 3 Climate Data
 
-If we want to mdoel the range as a function of climate, we also need to aquire spatial climate data. There are a number of sources for this; we will use the tried-and-true [WorldClim](http://worldclim.org/) dataset, which we can access directly from the `raster` package. However, there are newer datasets available; in particular the [Chelsa Climate Dataset](https://chelsa-climate.org) is quite good and freely available. There is an R-pacakge in development called [ChelsaDL](https://github.com/matthewkling/chelsaDL) that gives you access to these data directly from R.
+If we want to mdoel the range as a function of climate, we also need to aquire spatial climate data. There are a number of sources for this; we will use the tried-and-true [WorldClim](http://worldclim.org/) dataset, which we can access directly from the `worldclim` package. However, there are newer datasets available; in particular the [Chelsa Climate Dataset](https://chelsa-climate.org) is quite good and freely available. There are also R packages that can give you access to these data directly from R.
 
 We will use the [bioclim](https://www.worldclim.org/data/bioclim.html) climate variables for our analysis; be sure to read over the link for information on what these variables represent and why they are useful in SDM applications. We get 19 (!) variables in bioclim. Note that the Chelsea dataset [provides even more bioclim variables](https://chelsa-climate.org/bioclim/).
 
 ```{r bioclim}
+## Note that this can be slow, btu it should only run once per computer
+
 ## make sure the directory exists
 path = "../data/clim"
 dir.create(path, showWarnings = FALSE)
-clim = getData("worldclim", var="bio", res=10, download=T, path=path)
+
+clim = worldclim_global(var = "bio", res = 10, path = path)
 plot(clim)
 ```
 
-We have already set the appropriate resolution using the `res` argument. However, the `raster` package provides a lot of functions that are useful for manipulating these data in case we need to change resolutions, extents, etc. It is useful to browse the help for these to know they are available:
+We have already set the appropriate resolution using the `res` argument. However, the `terra` package provides a lot of functions that are useful for manipulating these data in case we need to change resolutions, extents, etc. It is useful to browse the help for these to know they are available:
 
 * `?resample`
 * `?aggregate`
@@ -254,24 +261,26 @@ shrew_sf = cbind(shrew_sf, extract(clim, shrew_sf))
 head(shrew_sf[, grep("bio", colnames(shrew_sf))])
 
 ## Here, for example, are the points, coloured by bio1, which is the mean annual temperature
-## Note that bioclim is stored as an integer, meaning that the temperature values are in units of 1/10 degree
 wmap + geom_sf(data = shrew_range, colour = "#aa1308", fill="white", alpha=0.4) + 
-	geom_sf(data = shrew_sf, aes(colour = bio1), size=0.7) + 
-	labs(colour = "Mean Annual Temperature (°C×10)") + scale_color_viridis_c(option = "magma")
+	geom_sf(data = shrew_sf, aes(colour = wc2.1_10m_bio_1), size=0.7) + 
+	labs(colour = "Mean Annual Temperature (°C)") + scale_color_viridis_c(option = "magma")
 ```
 
 We can also intersect the rasters if we want climate variables for the range polygons. Here we intersect `bio18`, which is the precipitation during the warmest quarter. Why might this be a sensible variable for this organism?
 
 ```{r intersect_poly}
-range_18 = intersect(shrew_range_r, clim$bio18)
+# fails! we need to align the rasters
+# range_18 = intersect(shrew_range_r, clim$wc2.1_10m_bio_18)
 
-## first we must make sure that the bioclim variable we want has the same extent as the raster for the range
-bio18 = resample(clim$bio18, shrew_range_r)
+# first we must make sure that the bioclim variable we 
+# want has the same extent as the raster for the range
+bio18 = resample(clim$wc2.1_10m_bio_18, shrew_range_r)
 
-## this works because bio18 holds the values for precip, shrew_range_r is either 1 (for inside the range) or
-## NA (for outside the range); the result hold precip values for inside the range, NA otherwise
-range_18 = shrew_range_r * bio18
-range_18_pts = as.data.frame(rasterToPoints(range_18))
+# next we mask to remove points outside the range
+range_18 = mask(bio18, shrew_range_r)
+
+# finally convert to a dataframe for plotting
+range_18_pts = as.data.frame(range_18, xy = TRUE)
 colnames(range_18_pts) = c("x", "y", "bio18")
 wmap + geom_tile(data = range_18_pts, aes(x=x, y=y, fill=bio18), alpha = 0.8) + scale_fill_viridis_c(direction=-1)
 ```
