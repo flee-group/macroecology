@@ -27,14 +27,13 @@ We will explore major concepts and advances in macroecology through a combinatio
 .tg .tg-0pky{border-color:inherit;text-align:left;vertical-align:top}
 .tg .tg-bord{border-color:inherit;text-align:left;vertical-align:top;border-right: double gray}
 </style>
-<table class="tg" style="undefined;table-layout: fixed; width: 90%">
+<table class="tg" style="undefined;table-layout: fixed; width: 80%">
 <colgroup>
 <col style="width: 10%">
 <col style="width: 10%">
 <col style="width: 25%">
 <col style="width: 10%">
 <col style="width: 25%">
-<col style="width: 20%">
 </colgroup>
 <thead>
   <tr>
@@ -43,7 +42,6 @@ We will explore major concepts and advances in macroecology through a combinatio
     <th class="tg-fymr">Lecture Topic</th>
     <th class="tg-fymr">Seminar Time</th>
     <th class="tg-fymr">Seminar Topic</th>
-    <th class="tg-0pky"><span style="font-weight:bold">Readings</span></th>
   </tr>
 </thead>
 <tbody>
@@ -53,7 +51,6 @@ We will explore major concepts and advances in macroecology through a combinatio
     <td class="tg-bord">Niches, species ranges<br/>Lecture notes <a href="https://fileshare.uibk.ac.at/f/1545d34b2dc046109178/?dl=1">#1</a> <a href="https://fileshare.uibk.ac.at/f/7cbecde9b0614eb68100/?dl=1">#2</a></td>
     <td class="tg-0pky">15:30-17:30</td>
     <td class="tg-0pky">Species Distribution Modelling I<br/><a href="sdm_prep.html">SDM Data Preparation</a></td>
-    <td class="tg-0pky"><a href="https://www.cell.com/trends/ecology-evolution/fulltext/S0169-5347(18)30186-1">Shade et al. 2018</a></td>
   </tr>
   
 
@@ -63,7 +60,6 @@ We will explore major concepts and advances in macroecology through a combinatio
     <td class="tg-bord">Biodiversity, island biogeography<br/>Lecture notes <a href="https://fileshare.uibk.ac.at/f/99195db2e6f64da4a3a2/?dl=1">#3</a> <a href="https://fileshare.uibk.ac.at/f/6a0db75e6fbd4d47bf01/?dl=1">#4</a></td>
     <td class="tg-0pky">15:30-17:30</td>
     <td class="tg-0pky">Species Distribution Modelling II<br/><a href="sdm.html">SDM: Modelling</a></td>
-    <td class="tg-0pky"><a href="https://www.annualreviews.org/doi/full/10.1146/annurev.ecolsys.110308.120159">Elith & Leathwick 2009</a></td>
   </tr>
 
   
@@ -74,7 +70,6 @@ We will explore major concepts and advances in macroecology through a combinatio
       Conservation macroecology (<a href="https://fileshare.uibk.ac.at/f/de11186bde3c46789318/?dl=1">#5</a>)</td>
     <td class="tg-0pky"></td>
     <td class="tg-0pky"></td>
-    <td class="tg-0pky"></td>
   </tr>
 
 <tr style="border-bottom: double gray">
@@ -83,7 +78,6 @@ We will explore major concepts and advances in macroecology through a combinatio
     <td class="tg-bord">Joint species distribution models, review and discussion</td>
     <td class="tg-0pky">15:30-17:30</td>
     <td class="tg-0pky">Species Distribution Modelling III</td>
-    <td class="tg-0pky"><a href="https://science.sciencemag.org/content/297/5586/1548.abstract">Jetz and Rahbek 2002</a></td>
   </tr>
 
 
@@ -93,10 +87,21 @@ We will explore major concepts and advances in macroecology through a combinatio
     <td class="tg-bord"></td>
     <td class="tg-0pky">13:45-17:30</td>
     <td class="tg-0pky"><a href="biodiversity.html">Biodiversity Modelling</a></td>
-    <td class="tg-0pky"><a href="https://www.nature.com/articles/nature11631">Jetz et al. 2012</a><br/><a href="https://www.nature.com/articles/nature14324/briefing/signup/?origin=Nature&originReferralPoint=EmailBanner">Newbold et al. 2015</a></td>
   </tr>
 </tbody>
 </table>
+
+## Readings
+During each seminar session, a group of students will lead a discussion of a relatively recent paper in macroecology. These readings will be distributed to groups during the first seminar session.
+
+* [Shade et al. 2018](https://www.cell.com/trends/ecology-evolution/fulltext/S0169-5347(18)30186-1): Macroecology to Unite All Life, Large and Small
+* [Elith & Leathwick 2009](https://www.annualreviews.org/doi/full/10.1146/annurev.ecolsys.110308.120159): Species Distribution Models: Ecological Explanation and Prediction Across Space and Time
+* [Jetz and Rahbek 2002](https://science.sciencemag.org/content/297/5586/1548.abstract): Geographic Range Size and Determinants of Avian Species Richness
+* [Jetz et al. 2012](https://www.nature.com/articles/nature11631): The global diversity of birds in space and time
+* [Newbold et al. 2015](https://www.nature.com/articles/nature14324): Global effects of land use on local terrestrial biodiversity
+* [Pollock et al. 2019](https://www.nature.com/articles/nature22368): Large conservation gains possible for global biodiversity facets
+* [Cai et al. 2025](https://nsojournals.onlinelibrary.wiley.com/doi/10.1111/ecog.07461): Assembly processes inferred from eDNA surveys of a pond metacommunity are consistent with known species ecologies
+
 
 
 ## Exercises & Assignments
