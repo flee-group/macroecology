@@ -91,7 +91,10 @@ We will explore major concepts and advances in macroecology through a combinatio
 </tbody>
 </table>
 
-## Readings
+### Lecture exam
+The lecture will be marked with an in-class written exam. Details to follow.
+
+### Readings
 During each seminar session, a group of students will lead a discussion of a relatively recent paper in macroecology. These readings will be distributed to groups during the first seminar session.
 
 * [Shade et al. 2018](https://www.cell.com/trends/ecology-evolution/fulltext/S0169-5347(18)30186-1): Macroecology to Unite All Life, Large and Small
@@ -104,13 +107,14 @@ During each seminar session, a group of students will lead a discussion of a rel
 
 
 
-## Exercises & Assignments
-* **Paper discussions**: We will discuss some relatively recent literature during lecture and/or seminar times. Students will be asked to read the papers in advance and come prepared with a few discussion points, and to participate actively in the discussions.
-* **Coding exercises**: The rest of the seminar time will be spent model building. Most code for building the models will be provided, so the focus will be on exploring different variables, interpreting results, and checking model performance. **Coding exercises won't be graded.** They are here to help you understand the models and to prepare you for the final project.
-* **Final project**: Choose a macroecological dataset (either your own, one found via a data source presented in class, or one of the datasets we've used for the exercises). Develop, in consultation with the instructor one or two macro-scale hypotheses relevant to the dataset. Design and implement a (reasonably) complete analysis testing your hypothesis. Present your results in the form of a short report; this should include the usual parts of a short-form scientific paper (Intro, Results & Discussion, Methods). Code and data for your model should be prepared in a self-contained manner and provided as an appendix. If you do not have permission to share the data, this is ok, but consult with the instructor beforehand. The project can be done individually or in a small (2-3 person) group. **Due**: 31.08.2023
+### Coding exercises
+The rest of the seminar time will be spent model building. Most code for building the models will be provided, so the focus will be on exploring different variables, interpreting results, and checking model performance. **Coding exercises won't be graded.** They are here to help you understand the models and to prepare you for the final project.
 
-## Assessment
-* Participation (lecture, discussions, coding exercises): 50%
+### Final project
+Choose a macroecological dataset (either your own, one found via a data source presented in class, or one of the datasets we've used for the exercises). Develop, in consultation with the instructor one or two macro-scale hypotheses relevant to the dataset. Design and implement a (reasonably) complete analysis testing your hypothesis. Present your results in the form of a short report; this should include the usual parts of a short-form scientific paper (Intro, Results & Discussion, Methods). Code and data for your model should be prepared in a self-contained manner and provided as an appendix. If you do not have permission to share the data, this is ok, but consult with the instructor beforehand. The project can be done individually or in a small (2-3 person) group. **Due**: 30.06.2025
+
+### Seminar Assessment
+* Participation (discussions, coding exercises): 50%
 * Final project: 50%
 
 
