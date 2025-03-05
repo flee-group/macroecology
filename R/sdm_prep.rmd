@@ -59,7 +59,7 @@ This indicates only one known name, so we proceed with a record search.
 
 ```{r shrew}
 occ_count(taxonKey = tkey$data$key)
-shrew = occ_search(taxonKey = tkey$data$key, limit=800)$data
+shrew = occ_search(taxonKey = tkey$data$key, limit=1200)$data
 
 ## remove NA coordinates
 shrew = subset(shrew, !is.na(decimalLatitude))
@@ -252,7 +252,7 @@ We have already set the appropriate resolution using the `res` argument. However
 
 ### 3.1 Joining (intersecting) occurrence and climate data
 
-We now have two sources of information on the distribution of the alpine shrew, the occurrences from GBIF (`shrew_sf`) and the range map in both polygon (`shrew_range`) or raster (`shrew_range_r`) format. We can use functions in the raster package to get the climate values for either all of the points, or all of the cells in the raster.
+We now have two sources of information on the distribution of the alpine shrew, the occurrences from GBIF (`shrew_sf`) and the range map in both polygon (`shrew_range`) or raster (`shrew_range_r`) format. We can use functions in the terra package to get the climate values for either all of the points, or all of the cells in the raster.
 
 ```{r intersect}
 
