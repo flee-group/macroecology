@@ -68,7 +68,7 @@ We will explore major concepts and advances in macroecology through a combinatio
 <tr style="border-bottom: double gray">
     <td class="tg-bord">Thu 13.03</td>
     <td class="tg-0pky">13:45-17:30</td>
-    <td class="tg-bord">The Eltonian niche<br/>
+    <td class="tg-bord">Biodiversity modelling<br/>The Eltonian niche<br/>
       Conservation macroecology</td>
     <!-- <td class="tg-bord">The Eltonian niche<br/> -->
       <!-- Conservation macroecology (<a href="https://fileshare.uibk.ac.at/f/de11186bde3c46789318/?dl=1">#5</a>)</td> -->
