@@ -44,7 +44,7 @@ occ_count(country="AT", basisOfRecord = "OBSERVATION")
 
 ### 1.1 Downloading records
 
-We will use *Sorex alpinus*, the alpine shrew, as an example taxon for this exercise. The alpine shrew can be uncommonly found in Tirol, and is listed as near threatened by the [IUCN](https://www.iucnredlist.org/species/29660/9514588).
+We will use *Sorex alpinus*, the alpine shrew, as an example taxon for this exercise. The alpine shrew can be uncommonly found in Tirol, and is listed as near threatened by the [IUCN](https://www.iucnredlist.org/species/29660/226864177).
 
 ![](../img/Sorex_alpinus.jpg)
 
@@ -84,7 +84,7 @@ ggplot(countries) +
 
 ```
 
-One record looks suspicious; our shrew probably does not occur in Inner Mongolia. But there are many other ways that GBIF records can be less precise than we want. For example, the location precision field tells us how well the location is known for each record; we may want to remove records that are not very precise.
+One record looks suspicious; our shrew probably does not occur in Northeast China. But there are many other ways that GBIF records can be less precise than we want. For example, the location precision field tells us how well the location is known for each record; we may want to remove records that are not very precise.
 
 
 ```{r precision}
