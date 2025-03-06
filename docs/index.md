@@ -1,4 +1,4 @@
-**Instructors**: [Lauren Talluto](mailto:lauren.talluto@uibk.ac.at) (VO), Technikerstraße 25, Room 506
+**Instructors**: [Lauren Talluto](mailto:lauren.talluto@uibk.ac.at) (VO), Technikerstraße 25, Room 506 <br/>
 [Jan Martini](mailto:jan.martini@uibk.ac.at) (SE)
 
 
