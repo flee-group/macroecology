@@ -48,30 +48,43 @@ We will explore major concepts and advances in macroecology through a combinatio
  <tr style="border-bottom: double gray">
     <td class="tg-bord">Thu 06.03</td>
     <td class="tg-0pky">13:45-15:30</td>
-    <td class="tg-bord"><a href="https://fileshare.uibk.ac.at/f/4226ac6339454d81a0d2/?dl=1">Introduction</a><br/>Niches, species ranges</td>
-    <!-- <td class="tg-bord">Niches, species ranges<br/>Lecture notes <a href="https://fileshare.uibk.ac.at/f/1545d34b2dc046109178/?dl=1">#1</a> <a href="https://fileshare.uibk.ac.at/f/7cbecde9b0614eb68100/?dl=1">#2</a></td> -->
+    <td class="tg-bord"><a href="https://fileshare.uibk.ac.at/f/4226ac6339454d81a0d2/?dl=1">Introduction</a></td>
     <td class="tg-0pky">15:30-17:30</td>
-    <td class="tg-0pky">Species Distribution Modelling I<br/><a href="sdm_prep.html">SDM Data Preparation</a></td>
+    <td class="tg-0pky">
+      Species Distribution Modelling I<br/>
+      <a href="sdm_prep.html">SDM Data Preparation</a>
+    </td>
   </tr>
   
 
 <tr style="border-bottom: double gray">
     <td class="tg-bord">Tues 11.03</td>
     <td class="tg-0pky">13:45-15:30</td>
-    <td class="tg-bord">Species distribution modelling<br/>Biodiversity, island biogeography</td>
-    <!-- <td class="tg-bord">Biodiversity, island biogeography<br/>Lecture notes <a href="https://fileshare.uibk.ac.at/f/99195db2e6f64da4a3a2/?dl=1">#3</a> <a href="https://fileshare.uibk.ac.at/f/6a0db75e6fbd4d47bf01/?dl=1">#4</a></td> -->
+    <td class="tg-bord">
+      Niches, species ranges<br/>
+      Species distribution modelling
+      <!-- <a href="">Niches, species ranges</a><br/> -->
+      <!-- <a href="">Species distribution modelling</a><br/> -->
+    </td>
     <td class="tg-0pky">15:30-17:30</td>
-    <td class="tg-0pky">Species Distribution Modelling II<br/><a href="sdm.html">SDM: Modelling</a></td>
+    <td class="tg-0pky">
+      Species Distribution Modelling II<br/>
+      <a href="sdm.html">SDM: Modelling</a>
+    </td>
   </tr>
 
   
 <tr style="border-bottom: double gray">
     <td class="tg-bord">Thu 13.03</td>
     <td class="tg-0pky">13:45-17:30</td>
-    <td class="tg-bord">Biodiversity modelling<br/>The Eltonian niche<br/>
-      Conservation macroecology</td>
-    <!-- <td class="tg-bord">The Eltonian niche<br/> -->
-      <!-- Conservation macroecology (<a href="https://fileshare.uibk.ac.at/f/de11186bde3c46789318/?dl=1">#5</a>)</td> -->
+    <td class="tg-bord">
+      Metapopulations<br/>
+      Biodiversity, island biogeography<br/>
+      The Eltonian niche<br/>
+      <!-- <a href="">Metapopulations</a><br/> -->
+      <!-- <a href="">Biodiversity, island biogeography</a><br/> -->
+      <!-- <a href="">The Eltonian niche</a><br/> -->
+    </td>
     <td class="tg-0pky"></td>
     <td class="tg-0pky"></td>
   </tr>
@@ -79,7 +92,14 @@ We will explore major concepts and advances in macroecology through a combinatio
 <tr style="border-bottom: double gray">
     <td class="tg-bord">Tues 18.03</td>
     <td class="tg-0pky">13:45-15:30</td>
-    <td class="tg-bord">Joint species distribution models, review and discussion</td>
+    <td class="tg-bord">
+      Conservation macroecology<br/>
+      Joint species distribution models<br/>
+      Review and discussion
+      <!-- <a href="">Conservation macroecology</a><br/> -->
+      <!-- <a href="">Joint species distribution models</a><br/> -->
+      <!-- <a href="">Review and discussion</a><br/> -->
+    </td>
     <td class="tg-0pky">15:30-17:30</td>
     <td class="tg-0pky">Species Distribution Modelling III</td>
   </tr>
