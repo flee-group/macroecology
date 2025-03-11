@@ -61,10 +61,8 @@ We will explore major concepts and advances in macroecology through a combinatio
     <td class="tg-bord">Tues 11.03</td>
     <td class="tg-0pky">13:45-15:30</td>
     <td class="tg-bord">
-      Niches, species ranges<br/>
-      Species distribution modelling
-      <!-- <a href="">Niches, species ranges</a><br/> -->
-      <!-- <a href="">Species distribution modelling</a><br/> -->
+      <a href="https://fileshare.uibk.ac.at/f/84bf7a4f41f04aefa7c7/?dl=1">Niches, species ranges</a><br/>
+      <a href="https://fileshare.uibk.ac.at/f/e9f91237f5e246078048/?dl=1">Species distribution modelling</a><br/>
     </td>
     <td class="tg-0pky">15:30-17:30</td>
     <td class="tg-0pky">
