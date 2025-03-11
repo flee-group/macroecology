@@ -119,12 +119,19 @@ The lecture will be marked with an in-class written exam. Details to follow.
 ### Readings
 During each seminar session, a group of students will lead a discussion of a relatively recent paper in macroecology. These readings will be distributed to groups during the first seminar session.
 
-* [Shade et al. 2018](https://www.cell.com/trends/ecology-evolution/fulltext/S0169-5347(18)30186-1): Macroecology to Unite All Life, Large and Small
-* [Elith & Leathwick 2009](https://www.annualreviews.org/doi/full/10.1146/annurev.ecolsys.110308.120159): Species Distribution Models: Ecological Explanation and Prediction Across Space and Time
+#### Selected Readings
+
 * [Jetz and Rahbek 2002](https://science.sciencemag.org/content/297/5586/1548.abstract): Geographic Range Size and Determinants of Avian Species Richness
 * [Jetz et al. 2012](https://www.nature.com/articles/nature11631): The global diversity of birds in space and time
 * [Newbold et al. 2015](https://www.nature.com/articles/nature14324): Global effects of land use on local terrestrial biodiversity
 * [Pollock et al. 2019](https://www.nature.com/articles/nature22368): Large conservation gains possible for global biodiversity facets
+
+#### Extra Readings
+
+These papers were not selected for discussion in the seminar (and they will not be on the lecture exam) but they may be interesting for you.
+
+* [Shade et al. 2018](https://www.cell.com/trends/ecology-evolution/fulltext/S0169-5347(18)30186-1): Macroecology to Unite All Life, Large and Small
+* [Elith & Leathwick 2009](https://www.annualreviews.org/doi/full/10.1146/annurev.ecolsys.110308.120159): Species Distribution Models: Ecological Explanation and Prediction Across Space and Time
 * [Cai et al. 2025](https://nsojournals.onlinelibrary.wiley.com/doi/10.1111/ecog.07461): Assembly processes inferred from eDNA surveys of a pond metacommunity are consistent with known species ecologies
 
 
