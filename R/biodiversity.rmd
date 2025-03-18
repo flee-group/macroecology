@@ -209,7 +209,7 @@ prdat$richness = predict(mod1, newdata=prdat, type='response')
 
 pts = ggplot(data = richness_df) + geom_point(aes(x=bio12, y=richness), size = 0.05) + 
 	xlab("Annual Precipitation")
-m1_p = pts + geom_line(data = prdat, aes(x=bio12, y=richness), size = 1.4, colour = cols[1])
+m1_p = pts + geom_line(data = prdat, aes(x=bio12, y=richness), linewidth = 1.4, colour = cols[1])
 m1_p
 ```
 
@@ -306,7 +306,7 @@ First, a last note about the Poisson assumption. At the beginning, we noted that
 round(deviance(mod_f) / mod_f$df.residual, 3)
 ```
 
-Slightly less than one, so we can at least assume the dispersion of our model is appropriate.
+Less than one, so we can at least assume the dispersion of our model is quite unappropriate. What could we do?
 
 From here, this section is deliberately short. I first provide some code for producing partial a partial response plot, but I encourage you to explore the other variables on your own. What can we learn about the pattern of mammal species richness? Are any results surprising?
 
