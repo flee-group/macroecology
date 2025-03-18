@@ -23,7 +23,7 @@ library(gridExtra)
 
 Today we will be exploring biodiversity using the IUCN rangemaps that we briefly explored in the first exercise. Note that this dataset includes all species for which the IUCN performs an assessment, and that, being expert-derived rangemaps, the resolution is rather coarse. Thus, our interpretations must be made with care, as they will necessarily represent approximate or potential diversity, rather than diversity as measured during (e.g.) a biodiversity inventory.
 
-First let's load and visualise the response variable. The mammal range maps, cropped to the same extent we have had before, are in the `mammal_ranges.rds` file. We can use the `fasterize` function to convert these individual range polygons into a map of species richness (by counting the number of polygons overlapping each grid cell). We use the climate data as the template for our raster.
+First let's load and visualise the response variable. The mammal range maps, cropped to the same extent we have had before, are in the `mammal_ranges.rds` file. We can use the `rasterize` function to convert these individual range polygons into a map of species richness (by counting the number of polygons overlapping each grid cell). We use the climate data as the template for our raster.
 
 ```{r rasterize}
 mamm = readRDS("../data/biodiv/mammal_ranges.rds")
@@ -176,7 +176,7 @@ c_map + geom_tile(data = mamm_pl, aes(x=x, y=y, fill=layer), alpha = 0.8) +
 
 ### 2.3 Joining the data
 
-The final step, joining the data, is trivial. The rasters are already aligned and in the same format, so we just use the `stack` function to collapse them into a single dataset, and then `rasterToPoints` to put them into a data.frame for analysis.
+The final step, joining the data, is trivial. The rasters are already aligned and in the same format, so we just use the `c` function to collapse them into a single dataset, and then `as.data.frame` to put them into a data.frame for analysis.
 
 ```{r stack}
 richness_df = c(richness = mamm_r, elev = elev, hii = hii, clim_pres)
@@ -193,13 +193,6 @@ richness_df$hii = as.numeric(richness_df$hii)
 head(richness_df)
 
 ```
-
-The objects created here are available on OLAT. If you aren't able to run the code above, just download them and read them in as follows, then continue with the code below.
-
-```{r get_reduced, eval = FALSE}
-
-```
-
 
 
 ## 3. Model building
@@ -220,7 +213,7 @@ m1_p = pts + geom_line(data = prdat, aes(x=bio12, y=richness), size = 1.4, colou
 m1_p
 ```
 
-This model certainly seems inadequate. There is very high scatter around the line, and the relationship seems highly nonlinear. Interestingly, we see an decrease in richness with precipitation.
+This model certainly seems inadequate. There is very high scatter around the line, and the relationship seems highly nonlinear. Interestingly, we see an increase in richness with precipitation.
 
 We could continue as before, fitting polynomials to our data, but instead perhaps it makes sense to fit a different kind of model.
 
