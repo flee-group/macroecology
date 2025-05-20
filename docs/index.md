@@ -104,9 +104,9 @@ We will explore major concepts and advances in macroecology through a combinatio
     <td class="tg-bord">Thu 14.05</td>
     <td class="tg-0pky">13:15–15:00</td>
     <td class="tg-bord">
-      The Eltonian niche<br/>
+      <a href="https://fileshare.uibk.ac.at/f/841e9fcdb5e54ae8a319/?dl=1">The Eltonian niche<br/>
       Conservation macroecology<br/>
-      Review and discussion
+      Review and discussion</a>
     </td>
     <td class="tg-0pky"></td>
     <td class="tg-0pky"></td>
